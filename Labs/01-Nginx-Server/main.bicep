@@ -1,5 +1,5 @@
 // UPDATED: Changed to West Europe for better quota availability
-param location string = 'westeurope'
+param location string = 'eastus'
 param vmName string = 'minu-virtukas'
 param adminUsername string = 'virtualhermit'
 
