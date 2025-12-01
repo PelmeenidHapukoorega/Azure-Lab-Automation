@@ -32,4 +32,4 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 ### How to Run
 1.  Go to the **Actions** tab.
 2.  Select **Deploy Lab 01**.
-3.  Click **Run Workflow** and choose your target region.
+3.  Click **Run Workflow** and choose your target region. If one fails, switch to a different region since the original could be full!
