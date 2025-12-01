@@ -1,11 +1,11 @@
-# start_chat.py (FINAL, RELIABLE VERSION)
+# start_chat.py (FINAL, COMPATIBLE VERSION)
 import os
 from google import genai
 
 try:
     client = genai.Client()
     
-    # Using the fast, generally available model
+    # Using the fast, generally available model (best chance to avoid hangs)
     MODEL_NAME = "gemini-2.5-flash" 
     
     chat = client.chats.create(model=MODEL_NAME) 
@@ -19,11 +19,11 @@ try:
         
         print("Gemini is thinking...")
         
-        # Sending the message with a 60-second timeout to prevent freezing
-        response = chat.send_message(user_prompt, timeout=60) 
+        # Removed 'timeout' argument to fix "unexpected keyword argument" error
+        response = chat.send_message(user_prompt) 
         
         print(f"\nGemini: {response.text}\n")
 
 except Exception as e:
-    # This will now catch both API key and Timeout errors
-    print(f"An error occurred: {e}. Check your API key, installation, and network connection.")
+    # This will now only catch network/connection errors if they persist
+    print(f"An error occurred: {e}. Check your network connection.")
