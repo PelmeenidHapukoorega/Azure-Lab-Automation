@@ -6,21 +6,21 @@ param adminUsername string = 'virtualhermit'
 param adminPassword string
 
 // 1. Public IP
-resource publicIp 'Microsoft.Network/publicIPAddresses@2022-07-01' = {
+resource publicIp 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: '${vmName}-ip'
   location: location
   sku: { name: 'Standard' }
   properties: { publicIPAllocationMethod: 'Static' }
 }
 
-// 2. NSG 
-resource nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
+// 2. NSG
+resource nsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
   name: 'minu-virtukasNSG' 
   location: location
   properties: {
     securityRules: [
       {
-        name: 'default-allow-ssh' 
+        name: 'default-allow-ssh'
         properties: {
           priority: 1000
           protocol: 'Tcp'
@@ -33,9 +33,9 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
         }
       }
       {
-        name: 'allow-http' 
+        name: 'allow-http'
         properties: {
-          priority: 100 
+          priority: 100
           protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
@@ -50,7 +50,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
 }
 
 // 3. VNet
-resource vnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   name: '${vmName}-vnet'
   location: location
   properties: {
@@ -68,7 +68,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
 }
 
 // 4. Network Interface
-resource nic 'Microsoft.Network/networkInterfaces@2022-07-01' = {
+resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: '${vmName}-nic'
   location: location
   properties: {
@@ -85,8 +85,8 @@ resource nic 'Microsoft.Network/networkInterfaces@2022-07-01' = {
   }
 }
 
-// 5. VM (Standard_D2s_v5 in NorwayEast)
-resource vm 'Microsoft.Compute/virtualMachines@2022-07-01' = {
+// 5. Virtual Machine (UPDATED VERSION TO 2023-03-01)
+resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   name: vmName
   location: location
   properties: {
@@ -116,8 +116,8 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-07-01' = {
   }
 }
 
-// 6. Extension customScript per Task 3
-resource nginxScript 'Microsoft.Compute/virtualMachines/extensions@2022-07-01' = {
+// 6. Extension (UPDATED VERSION TO 2023-03-01)
+resource nginxScript 'Microsoft.Compute/virtualMachines/extensions@2023-03-01' = {
   parent: vm
   name: 'customScript' 
   location: location
@@ -132,7 +132,6 @@ resource nginxScript 'Microsoft.Compute/virtualMachines/extensions@2022-07-01' =
       ]
     }
     protectedSettings: {
-      // Installs Nginx and completes the challenge part (overwriting index.html)
       commandToExecute: './configure-nginx.sh && echo "<html><body><h1>MinuVirtukas Automated Lab</h1></body></html>" > /var/www/html/index.html'
     }
   }
