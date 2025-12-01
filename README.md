@@ -30,6 +30,8 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
     *   Dynamic Resource Group management
 
 ### How to Run
-1.  Go to the **Actions** tab.
-2.  Select **Deploy Lab 01**.
-3.  Click **Run Workflow** and choose your target region. If one fails, switch to a different region since the original could be full!
+(Note: The "Run Workflow" button is only visible to me since im the owner. To test this yourself, please **Fork** this repository and add your own VM_PASSWORD secret.)
+
+1. Go to the Actions tab.
+2. Select Deploy Lab 01.
+3. Click Run Workflow and choose your target region.
