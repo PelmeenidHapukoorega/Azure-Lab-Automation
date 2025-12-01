@@ -30,7 +30,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
     *   Dynamic Resource Group management
 
 ### How to Run
-(Note: The "Run Workflow" button is only visible to me since im the owner. To test this yourself, please **Fork** this repository and add your own VM_PASSWORD secret.)
+(Note: The "Run Workflow" button is only visible to me since im the owner. To test this yourself, please **Fork** this repository and add your own AZURE_CREDENTIALS secret.)
 
 1. Go to the Actions tab.
 2. Select Deploy Lab 01.
