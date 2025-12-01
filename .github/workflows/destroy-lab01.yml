@@ -1,7 +1,7 @@
 name: Destroy Lab 01 (Cleanup)
 
 on: 
-  workflow_dispatch: # This makes it a manual button only
+  workflow_dispatch: 
 
 jobs:
   destroy:

@@ -2,7 +2,18 @@ name: Deploy Lab 01 (MinuVirtukas)
 
 on:
   workflow_dispatch:
-  push:
+    inputs:
+      targetRegion:
+        description: 'Select Azure Region'
+        required: true
+        default: 'northeurope'
+        type: choice
+        options:
+          - northeurope
+          - swedencentral
+          - westeurope
+          - eastus
+  push:     
     paths:
       - 'Labs/01-Nginx-Server/**'
 
@@ -20,11 +31,11 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az group create --name MinuVirtukas-RG --location eastus
+            az group create --name MinuVirtukas-RG --location ${{ inputs.targetRegion || 'northeurope' }}
 
       - name: Deploy Infrastructure
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: MinuVirtukas-RG
           template: ./Labs/01-Nginx-Server/main.bicep
-          parameters: adminPassword=${{ secrets.VM_PASSWORD }}
+          parameters: adminPassword=${{ secrets.VM_PASSWORD }} location=${{ inputs.targetRegion || 'northeurope' }}
