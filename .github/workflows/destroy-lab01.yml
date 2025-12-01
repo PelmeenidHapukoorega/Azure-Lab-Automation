@@ -1,0 +1,19 @@
+name: Destroy Lab 01 (Cleanup)
+
+on: 
+  workflow_dispatch: # This makes it a manual button only
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Delete Resource Group
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group delete --name MinuVirtukas-RG --yes --no-wait
+            echo "Deletion requested. The Resource Group will disappear in a few minutes."
