@@ -1,0 +1,30 @@
+name: Deploy Lab 01 (MinuVirtukas)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Labs/01-Nginx-Server/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create Resource Group
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create --name MinuVirtukas-RG --location norwayeast
+
+      - name: Deploy Infrastructure
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: MinuVirtukas-RG
+          template: ./Labs/01-Nginx-Server/main.bicep
+          parameters: adminPassword=${{ secrets.VM_PASSWORD }}
