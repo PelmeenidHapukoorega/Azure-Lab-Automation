@@ -1,4 +1,5 @@
-param location string = 'norwayeast'
+// UPDATED: Changed to West Europe for better quota availability
+param location string = 'westeurope'
 param vmName string = 'minu-virtukas'
 param adminUsername string = 'virtualhermit'
 
@@ -85,13 +86,14 @@ resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   }
 }
 
-// 5. Virtual Machine (UPDATED VERSION TO 2023-03-01)
+// 5. Virtual Machine (UPDATED SKU to Standard_B2s)
 resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   name: vmName
   location: location
   properties: {
     hardwareProfile: {
-      vmSize: 'Standard_D2s_v5'
+      // Changed to B-series. Much easier to get quota for!
+      vmSize: 'Standard_B2s'
     }
     osProfile: {
       computerName: vmName
@@ -116,7 +118,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-03-01' = {
   }
 }
 
-// 6. Extension (UPDATED VERSION TO 2023-03-01)
+// 6. Extension
 resource nginxScript 'Microsoft.Compute/virtualMachines/extensions@2023-03-01' = {
   parent: vm
   name: 'customScript' 
