@@ -1,11 +1,11 @@
 # Documentation without hands on will get you nowhere!
 
 I wanted to try my hand at deploying actual infra by taking my previously done labs and using my lab notes from AZ 305.
-Not gonna lie, did not expect what i walked in on, but the best way possible.
+Not gonna lie, did not expect what i walked in on, but in the best way possible!
 
 I did say in AZ 305 readme that i meant it when i said im genuinely pursuing to become Solutions architect, and I will.
 
-Lots of trial and error, running into errors, switching regions, deployment failures, switching SKUs, forgetting passwords...HOWEVER!
+I mean sure it can be frustrating, lots of trial and error, running into walls, switching regions, deployment failures, switching SKUs, forgetting passwords...HOWEVER!
 The satisfaction of finally seeing that green checkmark after so many trials and errors is... satisfying to say the least haha.
 
 Anyway, below i have listed my automation and deployment projects, enjoy!
