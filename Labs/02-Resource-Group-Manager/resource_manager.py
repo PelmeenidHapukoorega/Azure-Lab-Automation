@@ -34,7 +34,7 @@ def list_resource_groups(resource_client):
         print(f" > {rg.name.ljust(30)} ({rg.location})")
     print("-" * 40)
 
-def create_resource_group_idempotent(resource_client)
+def create_resource_group_idempotent(resource_client):
     """Workflow Goal 2: Check and Create (Idempotency)."""
     print("\n--- 2. Checking and Creating Resource Group (Idempotent) ---")
 
@@ -75,7 +75,7 @@ def delete_resource_group(resource_client):
     """Workflow Goal 4: Clean up (cost control)."""
     print(f"\n--- 4. Deleting Resource Group '{RESOURCE_GROUP_NAME}' (Cleanup) ---")
 
-    delete_operation = resource_client.resource_groups.begin_Delete(RESOURCE_GROUP_NAME)
+    delete_operation = resource_client.resource_groups.begin_delete(RESOURCE_GROUP_NAME)
 
     print("Deleting...Sit back, might take a while.")
     delete_operation.wait()
