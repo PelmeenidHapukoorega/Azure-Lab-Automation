@@ -41,6 +41,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 2. Select Deploy Lab 01.
 3. Click Run Workflow and choose your target region.
 
+Code:[Nginx server Deployment](Labs/01-Nginx-Server/main.bicep)
 
 ## Project 02: Automated Resource Group Manager
 **Goal:** Deploy a core Azure Resource Group (RG) programmatically using the Azure SDK for Python, ensuring Cost Accountability and Governance through mandatory tagging.
@@ -63,3 +64,5 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 2. Execute the script: From the root of your repository, execute the Python file using its relative path.
    Example: `python Labs/02-Resource-Group-Manager/resource_manager.py`
 3. Verify: The script will confirm the full lifecycle in the terminal output: Listing existing RGs, creating the new `Python-Managed-RG` with tags, and finally deleting it completely (for cost control).
+
+Code:[RG manager CRUD workflow](Labs/02-Resource-Group-Manager/resource_manager.py)
