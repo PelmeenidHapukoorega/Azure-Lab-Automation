@@ -17,6 +17,11 @@ Anyway, below i have listed my automation and deployment projects, enjoy!
 
 This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for Azure learning projects.
 
+## Table of contents
+* [Project-01:-Automated-Nginx-Deployment](#Project-01:-Automated-Nginx-Deployment)
+* [Project-02:-Automated-Resource-Group-Manager](#Project-02:-Automated-Resource-Group-Manager)
+
+  
 ## Project 01: Automated Nginx Deployment 
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
 
