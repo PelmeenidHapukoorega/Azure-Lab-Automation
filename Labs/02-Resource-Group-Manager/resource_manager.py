@@ -16,7 +16,7 @@ def get_resource_client():
             # If AZ account show fails, default creds still tries to find a subscription
             # However i force the script to stop if i cant confirm the ID for clarity
         return ResourceManagementClient(credential, subscription_info)
-    
+
     except Eexception as e:
         print(f" AUTHENTICATION ERROR: {E}")
         print("Please ensure you have run 'az login' and 'az account set --subscription'.")
@@ -36,7 +36,7 @@ def list_resource_groups(resource_client):
 
 def create_resource_group_idempotent(resource_client)
     """Workflow Goal 2: Check and Create (Idempotency)."""
-    print("\n--- 2. Checking and Creating Resource Group (Idempotent) ---") 
+    print("\n--- 2. Checking and Creating Resource Group (Idempotent) ---")
 
     # Checking existence
     if resource_client.resource_groups.check_existence(RESOURCE_GROUP_NAME):
