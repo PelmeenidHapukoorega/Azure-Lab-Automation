@@ -17,7 +17,7 @@ Anyway, below i have listed my automation and deployment projects, enjoy!
 
 This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for Azure learning projects.
 
-## Project 01: Automated Nginx Deployment ("MinuVirtukas")
+## Project 01: Automated Nginx Deployment 
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
 
 ### Tech Stack
