@@ -94,7 +94,7 @@ if __name__ == "__main__":
     # 3. List resources in new RG (spoiler alert:empty)
     list_resources_in_rg(client)
 
-    # For future reference: Provisioning VM, storage acc, etc goes However
+    # For future reference: Provisioning VM, storage acc, etc goes here
     # for test purposes this has been skipped
 
     # 4. Clean up RG
