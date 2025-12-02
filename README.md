@@ -1,4 +1,4 @@
-# Documentation without hands on will get you nowhere!
+# Documentation without hands-on will get you nowhere!
 
 I wanted to try my hand at deploying actual infra by taking my previously done labs and using my lab notes from AZ 305.
 Not gonna lie, did not expect what i walked in on, but in the best way possible!
