@@ -6,6 +6,12 @@ from azure.mgmt.resource import ResourceManagementClient
 RESOURCE_GROUP_NAME = "Python-Managed-RG"
 LOCATION = "eastus"
 
+MANDATORY_TAGS = {
+    "Environment": "Lab",
+    "CostCenter": "Automation",
+    "Owner": "VirtualHermit"
+}
+
 def get_resource_client():
     """Intializes and returns the ResourceManagementClient."""
     try:
@@ -35,7 +41,7 @@ def list_resource_groups(resource_client):
     print("-" * 40)
 
 def create_resource_group_idempotent(resource_client):
-    """Workflow Goal 2: Check and Create (Idempotency)."""
+    """Workflow Goal 2: Check and Create (Idempotency) with Mandatory Tags."""
     print("\n--- 2. Checking and Creating Resource Group (Idempotent) ---")
 
     # Checking existence
@@ -48,9 +54,13 @@ def create_resource_group_idempotent(resource_client):
     # RG Creation if it doesnt exist or updates RG if it does
     rg_result = resource_client.resource_groups.create_or_update(
         RESOURCE_GROUP_NAME,
-        {"location": LOCATION, "tags": {"project": "AZ305Lab"}}
+        {
+            "location": LOCATION, 
+            "tags": MANDATORY_TAGS
+        }
     )
-    print(f" Provisioned Resource Group: {rg_result.name} with tag 'AZ305Lab'")
+    tags_applied = ', '.join([f'{k}:{v}' for k, v in MANDATORY_TAGS.items()])
+    print(f" Provisioned Resource Group: {rg_result.name} with tags: {tags_applied}")
     print("-" * 40)
 
 def list_resources_in_rg(resource_client):
