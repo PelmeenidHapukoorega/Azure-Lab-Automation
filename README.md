@@ -18,11 +18,11 @@ Anyway, below i have listed my automation and deployment projects, enjoy!
 This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for Azure learning projects.
 
 ## Table of contents
-* [Project 01: Automated Resource Group Manager](#project-01-automated-resource-group-manager)
-* [Project 02: Storage Account Auditor & Governance](#project-02-storage-account-auditor--governance)
+* [Project 01: Automated Nginx Deployment](#project-01-automated-nginx-deployment)
+* [Project 02: Automated Resource Group Manager](#project-02-automated-resource-group-manager)
 * [Project 03: Automated VM Scheduler](#project-03-automated-vm-scheduler)
   
-## Project 01 Automated Nginx Deployment 
+## Project 01: Automated Nginx Deployment 
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
 
 ### Tech Stack
@@ -42,7 +42,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 3. Click Run Workflow and choose your target region.
 
 
-## Project 02 Automated Resource Group Manager
+## Project 02: Automated Resource Group Manager
 **Goal:** Deploy a core Azure Resource Group (RG) programmatically using the Azure SDK for Python, ensuring Cost Accountability and Governance through mandatory tagging.
 
 ### Tech Stack
