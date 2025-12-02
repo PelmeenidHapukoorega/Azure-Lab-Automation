@@ -35,3 +35,26 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 1. Go to the Actions tab.
 2. Select Deploy Lab 01.
 3. Click Run Workflow and choose your target region.
+
+
+## Project 02: Automated Resource Group Manager
+**Goal:** Deploy a core Azure Resource Group (RG) programmatically using the Azure SDK for Python, ensuring Cost Accountability and Governance through mandatory tagging.
+
+### Tech Stack
+*   **Language:** Python 3 for orchestration and execution logic (Azure SDK).
+*   **Authentication:** Default Azure credentials, az login as token.
+*   **Design principle:** Idempotency, ensures the script can run repeateadly without errors.
+*   **Governance:** Mandatory Tagging, enforces essential tags for Cost Control and Auditing.
+*   **Features:**
+    *   Idempotent Creation: Checks if the Resource Group exists before creating it, guaranteeing predictable deployment. 
+    *   Cost Control Tags: Automatically applies mandatory tags ('Environment: Lab', 'CostCenter: Automation', 'Owner: VirtualHermit') during creation.
+    *   Automated clean up: Includes a crucial final step ('begin_delete') to delete the Resource Group ('Python-Managed-RG'), preventing accidental Azure charges.
+
+### How to Run
+
+1. Authenticate Locally: Ensure you have logged into the Azure CLI and set your target subscription.
+   `az login`
+   `az account set --subscription "YOUR-SUBSCRIPTION-ID"`
+2. Execute the script: From the root of your repository, execute the Python file using its relative path.
+   Example: `python Labs/02-Resource-Group-Manager/resource_manager.py`
+3. Verify: The script will confirm the full lifecycle in the terminal output: Listing existing RGs, creating the new `Python-Managed-RG` with tags, and finally deleting it completely (for cost control).
