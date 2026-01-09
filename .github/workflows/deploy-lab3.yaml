@@ -32,5 +32,4 @@ jobs:
         with:
           resourceGroupName: toy-database-rg
           template: ./BicepLabs/03-Database/lab3.bicep
-          parameters: location=westus3
           failOnStdErr: false
