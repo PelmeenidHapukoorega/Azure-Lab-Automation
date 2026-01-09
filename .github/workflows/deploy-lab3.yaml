@@ -3,7 +3,7 @@ name: Deploy Lab 3 - Database
 on:
   push:
     paths:
-      - 'Labs/03-Database/**' # Only runs if Lab 3 files change
+      - 'Bicep Labs/03-Database/**' # Only runs if Lab 3 files change
   workflow_dispatch:
 
 permissions:
@@ -31,6 +31,6 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: toy-database-rg
-          template: ./Labs/03-Database/main.bicep
+          template: ./Bicep Labs/03-Database/lab3.bicep
           parameters: location=westus3
           failOnStdErr: false
