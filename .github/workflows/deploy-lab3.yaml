@@ -32,4 +32,5 @@ jobs:
         with:
           resourceGroupName: toy-database-rg
           template: ./BicepLabs/03-Database/lab3.bicep
+          parameters: sqlServerAdministratorLogin=${{ secrets.SQL_ADMIN_LOGIN }} sqlServerAdministratorPassword=${{secrets.SQL_PASSWORD}}
           failOnStdErr: false
