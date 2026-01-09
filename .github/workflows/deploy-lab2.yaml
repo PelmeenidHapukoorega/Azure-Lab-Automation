@@ -1,9 +1,9 @@
-name: Deploy Lab 3 - Database
+name: Deploy Lab 2 - App Service
 
 on:
   push:
     paths:
-      - 'Bicep Labs/03-Database/**' # Only runs if Lab 3 files change
+      - 'Bicep Labs/02-AppService/**'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  deploy-database:
+  deploy-app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,12 +25,12 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az group create --name toy-database-rg --location westus3
+            az group create --name toy-app-rg --location westus3
 
       - name: Deploy Bicep Template
         uses: azure/arm-deploy@v1
         with:
-          resourceGroupName: toy-database-rg
-          template: ./Bicep Labs/03-Database/lab3.bicep
+          resourceGroupName: toy-app-rg
+          template: ./Bicep Labs/02-AppService/main.bicep
           parameters: location=westus3
           failOnStdErr: false
