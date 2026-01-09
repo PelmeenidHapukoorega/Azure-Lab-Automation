@@ -32,5 +32,5 @@ jobs:
         with:
           resourceGroupName: toy-app-rg
           template: ./BicepLabs/02-AppService/main.bicep
-          parameters: location=westus3
+          parameters: location=westus3 environmentType=nonprod
           failOnStdErr: false
