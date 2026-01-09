@@ -1,0 +1,36 @@
+name: Deploy Lab 3 - Database
+
+on:
+  push:
+    paths:
+      - 'Labs/03-Database/**' # Only runs if Lab 3 files change
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-database:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create Resource Group
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create --name toy-database-rg --location westus3
+
+      - name: Deploy Bicep Template
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: toy-database-rg
+          template: ./Labs/03-Database/main.bicep
+          parameters: location=westus3
+          failOnStdErr: false
