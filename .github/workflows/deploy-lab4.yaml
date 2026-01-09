@@ -4,7 +4,7 @@ name: Deploy Lab 4 - Front Door
 on:
   push:
     paths:
-      - 'Bicep Labs/04-FrontDoor/**'
+      - 'BicepLabs/04-FrontDoor/**'
   workflow_dispatch: # Allows to click a button to run it manually
 
 permissions:
@@ -36,6 +36,6 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: toyfactory
-          template: ./Bicep Labs/04-FrontDoor/lab4.bicep
+          template: ./BicepLabs/04-FrontDoor/lab4.bicep
           parameters: location=westus3
           failOnStdErr: false

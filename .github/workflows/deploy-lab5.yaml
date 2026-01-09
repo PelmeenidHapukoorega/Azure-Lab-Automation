@@ -3,7 +3,7 @@ name: Deploy Lab 5 - Key Vault Integration
 on:
   push:
     paths:
-      - 'Bicep Labs/05-KeyVault/**'
+      - 'BicepLabs/05-KeyVault/**'
   workflow_dispatch:
 
 permissions:
@@ -32,6 +32,6 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: toy-keyvault-lab-rg
-          template: ./Bicep Labs/05-KeyVault/new.bicep
-          parameters: ./Bicep Labs/05-KeyVault/new.parameters.dev.json
+          template: ./BicepLabs/05-KeyVault/new.bicep
+          parameters: ./BicepLabs/05-KeyVault/new.parameters.dev.json
           failOnStdErr: false
