@@ -1,0 +1,41 @@
+name: Deploy Lab 4 - Front Door
+
+# Trigger: Running this when pushing code, but only if files in Lab 4 change
+on:
+  push:
+    paths:
+      - 'Bicep Labs/04-FrontDoor/**'
+  workflow_dispatch: # Allows to click a button to run it manually
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-to-azure:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checks out the code (Downloads it to the robot)
+      - uses: actions/checkout@v3
+
+      # 2. Log in to Azure using the Secret we just saved
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 3. Creates Resource Group Incase it doesnt exist
+      - name: Create Resource Group
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create --name toyfactory --location westus3
+
+      # 4. Deploys the Bicep file
+      - name: Deploy Bicep Template
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: toyfactory
+          template: ./Bicep Labs/04-FrontDoor/lab4.bicep
+          parameters: location=westus3
+          failOnStdErr: false
