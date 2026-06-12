@@ -20,7 +20,6 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 ## Table of contents
 * [Project 01: Automated Nginx Deployment](#project-01-automated-nginx-deployment)
 * [Project 02: Automated Resource Group Manager](#project-02-automated-resource-group-manager)
-* [Project 03: Automated VM Scheduler](#project-03-automated-vm-scheduler)
   
 ## Project 01: Automated Nginx Deployment 
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
