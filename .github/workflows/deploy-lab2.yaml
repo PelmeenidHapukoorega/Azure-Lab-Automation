@@ -3,7 +3,7 @@ name: Deploy Lab 2 - App Service
 on:
   push:
     paths:
-      - 'BicepLabs/02-AppService/**'
+      - 'Labs/03-AppService/**'
   workflow_dispatch:
 
 permissions:
@@ -31,6 +31,6 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: toy-app-rg
-          template: ./BicepLabs/02-AppService/main.bicep
+          template: ./Labs/03-AppService/main.bicep
           parameters: location=westus3 environmentType=nonprod
           failOnStdErr: false
