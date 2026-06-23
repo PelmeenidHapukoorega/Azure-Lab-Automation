@@ -13,55 +13,100 @@ Anyway, below i have listed my automation and deployment projects, enjoy!
 
 
 
-## Azure Lab Automation
+# Azure Lab Automation
 
 This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for Azure learning projects.
 
-## Table of contents
-* [Project 01: Automated Nginx Deployment](#project-01-automated-nginx-deployment)
-* [Project 02: Automated Resource Group Manager](#project-02-automated-resource-group-manager)
-  
-## Project 01: Automated Nginx Deployment 
+## Table of Contents
+
+* [Lab 01: Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
+* [Lab 02: Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
+* [Lab 05: Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
+
+---
+
+## Lab 01: Automated Nginx Deployment
+
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
 
-### Tech Stack
-*   **Language:** Bicep (Infrastructure as Code)
-*   **Automation:** GitHub Actions
-*   **Security:** OIDC (Federated Credentials) No stored passwords.
-*   **Features:**
-    *   Automated Region Selection 
-    *   Bootstrapping (Auto install Nginx on startup)
-    *   Dynamic Resource Group management
+**Tech Stack**
+- **Language:** Bicep (Infrastructure as Code)
+- **Automation:** GitHub Actions
+- **Security:** OIDC (Federated Credentials) — no stored passwords
 
-### How to Run
-(Note: The "Run Workflow" button is only visible to me since im the owner. To test this yourself, please **Fork** this repository and add your own `AZURE_CREDENTIALS` secret.)
+**Features**
+- Automated region selection
+- Bootstrapping (auto install Nginx on startup)
+- Dynamic Resource Group management
 
-1. Go to the Actions tab.
-2. Select Deploy Lab 01.
-3. Click Run Workflow and choose your target region.
+**How to Run**
+
+> The "Run Workflow" button is only visible to me as the owner. To test this yourself, fork this repository and add your own `AZURE_CREDENTIALS` secret.
+
+1. Go to the Actions tab
+2. Select Deploy Lab 01
+3. Click Run Workflow and choose your target region
 
 [Code](Labs/01-Nginx-Server/main.bicep)
 
-## Project 02: Automated Resource Group Manager
-**Goal:** Deploy a core Azure Resource Group (RG) programmatically using the Azure SDK for Python, ensuring Cost Accountability and Governance through mandatory tagging.
+---
 
-### Tech Stack
-*   **Language:** Python 3 for orchestration and execution logic (Azure SDK).
-*   **Authentication:** Default Azure credentials, az login as token.
-*   **Design principle:** Idempotency, ensures the script can run repeateadly without errors.
-*   **Governance:** Mandatory Tagging, enforces essential tags for Cost Control and Auditing.
-*   **Features:**
-    *   Idempotent Creation: Checks if the Resource Group exists before creating it, guaranteeing predictable deployment. 
-    *   Cost Control Tags: Automatically applies mandatory tags ('Environment: Lab', 'CostCenter: Automation', 'Owner: VirtualHermit') during creation.
-    *   Automated clean up: Includes a crucial final step ('begin_delete') to delete the Resource Group ('Python-Managed-RG'), preventing accidental Azure charges.
+## Lab 02: Automated Resource Group Manager
 
-### How to Run
+**Goal:** Deploy a core Azure Resource Group programmatically using the Azure SDK for Python, ensuring cost accountability and governance through mandatory tagging.
 
-1. Authenticate Locally: Ensure you have logged into the Azure CLI and set your target subscription.
-   `az login`
-   `az account set --subscription "YOUR-SUBSCRIPTION-ID"`
-2. Execute the script: From the root of your repository, execute the Python file using its relative path.
-   Example: `python Labs/02-Resource-Group-Manager/resource_manager.py`
-3. Verify: The script will confirm the full lifecycle in the terminal output: Listing existing RGs, creating the new `Python-Managed-RG` with tags, and finally deleting it completely (for cost control).
+**Tech Stack**
+- **Language:** Python 3 (Azure SDK)
+- **Authentication:** Default Azure credentials via `az login`
+- **Design principle:** Idempotency — the script can run repeatedly without errors
+
+**Features**
+- Idempotent creation: checks if the Resource Group exists before creating it
+- Mandatory tagging: enforces `Environment`, `CostCenter`, and `Owner` tags on creation
+- Automated cleanup: deletes the Resource Group after creation to prevent accidental charges
+
+**How to Run**
+
+1. Authenticate with Azure CLI:
+```bash
+   az login
+   az account set --subscription "YOUR-SUBSCRIPTION-ID"
+```
+2. Execute the script:
+```bash
+   python Labs/02-Resource-Group-Manager/resource_manager.py
+```
+3. The script will confirm the full lifecycle in terminal output: list existing RGs, create `Python-Managed-RG` with tags, then delete it.
 
 [Code](Labs/02-Resource-Group-Manager/resource_manager.py)
+
+---
+
+## Lab 05: Terraform Azure Foundation
+
+**Goal:** Deploy a complete Azure infrastructure foundation using Terraform — VNet, NSG, Storage Account, and VM. No portal clicks.
+
+**Tech Stack**
+- **IaC:** Terraform (HCL)
+- **Provider:** azurerm ~> 4.0
+- **Authentication:** Azure CLI
+
+**How to Run**
+
+1. Navigate to the terraform folder:
+```bash
+   cd Labs/05-Terraform-Foundation/terraform
+```
+2. Create your `terraform.tfvars` (never commit this): subscription_id = "your-subscription-id"
+3. Deploy:
+```bash
+   terraform init
+   terraform plan
+   terraform apply
+```
+4. Tear down when done:
+```bash
+   terraform destroy
+```
+
+[README](Labs/05-Terraform-Foundation/README.md) | [Code](Labs/05-Terraform-Foundation/terraform/)
