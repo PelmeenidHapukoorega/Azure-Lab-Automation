@@ -109,4 +109,4 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
    terraform destroy
 ```
 
-[README](Labs/05-Terraform-Foundation/README.md) | [Code](Labs/05-Terraform-Foundation/terraform/)
+[README](Labs/05-Terraform-Foundation/terraform/README.md) | [Code](Labs/05-Terraform-Foundation/terraform/)
