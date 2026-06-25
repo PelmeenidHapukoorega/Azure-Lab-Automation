@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, intial-scale=1.0">
+    <title><SimpleMetrics></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0d1117;
+            color: #e6edf3;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: #58a6ff;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #8b949e;
+            font-size: 0.95rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .panel {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #21262d;
+            font-size: 0.9rem;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row span:first-child {
+            color: #8b949e;
+        }
+
+        .info-row span:last-child {
+            color: #e6edf3;
+            font-weight: 500;
+        }
+
+        .health.indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .health-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #238636;
+            box-shadow: 0 0 8px #238636;
+            animation: pulse 2s infinite;
+        }
+
+        .health-dot.unhealthy {
+            background: #da3633;
+            box-shadow: 0 0 8px #da3633;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .health-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #3fb950;
+        }
+
+        .health-text.unhealthy { 
+            color: #f85149;
+        }
+
+        .hammer-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #e6edf3;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='14' y='16' width='6' height='14' rx='2' fill='%23888'/%3E%3Crect x='6' y='6' width='20' height='12' rx='3' fill='%23aaa'/%3E%3Crect x='18' y='4' width='6' height='8' rx='2' fill='%23e6a817'/%3E%3C/svg%3E") 8 8, pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .hammer-btn:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        hammer-btn:active {
+            transform: scale(0.97);
+        }
+
+        .shatter {
+            animation: shatter 0.3s ease-out;
+        }
+
+        @keyframes shatter {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.05) rotate(1deg); }
+            60% {transform: scale(0.97) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .load-result {
+            font-size: 0.85rem;
+            color: #8b949e;
+            min-height: 60px;
+        }
+
+        .load-result .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+        }
+
+        .load-result .metric span:last-child {
+            color: #58a6ff;
+            font-weight: 500;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #30363d;
+            border-top-color: #58a6ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Delivery mans animation */
+        .dude-stage {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dude-stage h2 {
+            font-size: 1rem;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .dude-track {
+            position: relative;
+            height: 60px;
+        }
+
+        .dude {
+            position: absolute;
+            bottom: 0;
+            font-size: 1.5rem;
+            animation: walk linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes walk {
+            0% { left: -60px; }
+            100% { left: 110%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🚀SimpleMetrics</h1>
+    <p>Live AKS scaling demo, watch pods appear as load increases</p>
+</header>
+
+<div class="grid">
+
+    <!-- Pod info panel -->
+     <div class="panel">
+        <h2> Pod info</h2>
+        <div class="info-row">
+            <span> Pod Name</span>
+            <span id="pod-name">-</span>
+        </div>
+        <div class="info-row">
+            <span>Running Pods</span>
+            <span id="pod-count">-</span>
+        </div>
+        <div class="info-row">
+            <span>Status</span>
+            <span id="pod-status">-</span>
+        </div>
+    </div>
+
+    <!-- Health panel -->
+    <div class="panel">
+        <h2>Health</h2>
+        <div class="health-indicator">
+            <div class="health-dot" id="health-dot"></div>
+            <span class="health-text" id="health-text">Checking...</span>
+        </div>
+        <div class="info-row" style="margin-top: 1rem;">
+            <span>Last checked</span>
+            <span id="health-time">-</span>
+        </div>
+    </div>
+
+    <!-- Load Panel -->
+     <div class="panel">
+        <h2>Load test</h2>
+        <button class="hammer-btn" id="hammer-btn" onclick="triggerLoad()">
+            🔨 Hit the Pod
+        </button>
+        <div class="load-result" id="load-result">
+            <span style="color: #8b949e;">Click the button to trigger a load computation.</span>
+        </div>
+     </div>
+
+</div>
+
+<!-- Dude stage -->
+<div class="dude-stage">
+    <h2>Pod workers - <span id="dude-count">0</span> running</h2>
+    <div class="dude-track" id="dude-track"></div>
+</div>
+
+<script>
+    let currentPodCount = 0;
+
+    // Fetch pod info every 3 seconds
+    async function fetchPodInfo() {
+        try {
+            const res = await fetch('/info');
+            const data = await res.json();
+            document.getElementById('pod-name').textContent = data.pod_name;
+            document.getElementById('pod-count').textContent = data.pod_count;
+            document.getElementById('pod-status').textContent = data.status;
+            updateDudes(data.pod_count);
+        } catch (e) {
+            document.getElementById('pod-status').textContent = 'Error';
+        }
+    }
+
+    // Fetch health every 5 seconds
+    async function fetchHealth() {
+        try {
+            const res = await fetch('/health');
+            const data = await res.json();
+            const dot = document.getElementById('health-dot');
+            const text = document.getElementById('health-text');
+            const time = document.getElementById('health-time');
+            if (data.status === 'healthy') {
+                dot.className = 'health-dot';
+                text.className = 'health-text';
+                text.textContent = 'unhealthy';
+            }
+            time.textContent = new Date().toLocaleTimeString();
+        } catch (e) {
+            document.getElementById('health-text').textContent = 'Unreachable';
+        }
+    }
+
+    // Trigger load endpoint
+    async function triggerLoad() {
+        const btn = document.getElementById('hammer-btn');
+        const result = document.getElementById('load-result');
+        btn.classList.add('shatter');
+        setTimeout(() => btn.classList.remove('shatter'), 300);
+        result.innerHTML = '<span class="spinner"></span Computing...';
+        try {
+            const res = await fetch('/load');
+            const data = await res.json();
+            result.innerHTML = `
+                <div class="metric"><span>Pod</span><span>${data.pod_name}</span></div>
+                <div class="metric"><span>Duration</span><span>${data.duration_seconds}s</span></div>
+                <div class="metric"><span>Computation</span><span>${data.computation}</span></div>
+            `;
+        } catch (e) {
+            result.innerHTML = '<span style="color:#f85149">Error reaching pod</span>';
+        }
+        fetchPodInfo;
+    }
+
+    // Update delivery dude animation based on pod count
+    function updateDudes(count) {
+        if (count === currentPodCount) return;
+        currentPodCount = count;
+        document.getElementById('dude-count'),textContent = count;
+        const track = document.getElementById('dude-track');
+        track.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            const dude = document.createElement('div');
+            dude.className = 'dude';
+            dude.textContent = '🏃📦';
+            const duration = 4 + Math.random() * 3;
+            const delay = (i / count) * -duration;
+            dude.style.animationDuration = duration + 's';
+            dude.style.animationDelay = delay + 's';
+            dude.style.bottom = (i * 8) + 'px';
+            track.appenChild(dude);
+        }
+    }
+
+    // Start polling
+    fetchPodInfo();
+    fetchHealth();
+    setInterval(fetchPodInfo, 3000);
+    setInterval(fetchHealth, 5000);
+</script>
+
+</body>
+</html>
