@@ -21,7 +21,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ---
 
-## Lab 01: Automated Nginx Deployment
+## Project: Automated Nginx Deployment
 
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
 
@@ -47,7 +47,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ---
 
-## Lab 02: Automated Resource Group Manager
+## Project: Automated Resource Group Manager
 
 **Goal:** Deploy a core Azure Resource Group programmatically using the Azure SDK for Python, ensuring cost accountability and governance through mandatory tagging.
 
@@ -78,7 +78,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ---
 
-## Lab 05: Terraform Azure Foundation
+## Project: Terraform Azure Foundation
 
 **Goal:** Deploy a complete Azure infrastructure foundation using Terraform — VNet, NSG, Storage Account, and VM. No portal clicks.
 
