@@ -15,9 +15,9 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ## Table of Contents
 
-* [Lab 01: Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
-* [Lab 02: Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
-* [Lab 05: Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
+* [Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
+* [Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
+* [Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
 
 ---
 
