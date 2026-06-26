@@ -37,7 +37,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 **How to Run**
 
-> The "Run Workflow" button is only visible to me as the owner. To test this yourself, fork this repository and add your own `AZURE_CREDENTIALS` secret.
+> To test this yourself, fork this repository and add your own `AZURE_CREDENTIALS` secret.
 
 1. Go to the Actions tab
 2. Select Deploy Lab 01
