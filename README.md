@@ -28,7 +28,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 **Tech Stack**
 - **Language:** Bicep (Infrastructure as Code)
 - **Automation:** GitHub Actions
-- **Security:** OIDC (Federated Credentials) — no stored passwords
+- **Security:** OIDC (Federated Credentials); no stored passwords
 
 **Features**
 - Automated region selection
