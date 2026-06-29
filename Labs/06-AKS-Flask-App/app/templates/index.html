@@ -169,6 +169,8 @@
             font-weight: 500;
             text-align: right;
             word-break: break-all;
+            min-width: 0;
+            overflow-wrap: break-word;
         }
 
         .spinner {
@@ -240,8 +242,7 @@
      <div class="panel">
         <h2> Pod info</h2>
         <div class="info-row">
-    <span>This Pod</span>
-    <span id="pod-name">—</span>
+    <span>Pods</span>
 </div>
 <div id="pod-names-list"></div>
         <div class="info-row">
@@ -294,7 +295,6 @@
         try {
             const res = await fetch('/info');
             const data = await res.json();
-            document.getElementById('pod-name').textContent = data.pod_name;
             document.getElementById('pod-count').textContent = data.pod_count;
             document.getElementById('pod-status').textContent = data.status;
             updateDudes(data.pod_count);
