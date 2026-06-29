@@ -6,6 +6,7 @@ terraform {
     storage_account_name = "sandertfstate"
     container_name = "tfstate"
     key = "lab06.terraform.tfstate"
+    use_azuread_auth = true
   }
 
     required_providers {
