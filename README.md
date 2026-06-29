@@ -1,38 +1,34 @@
-# Documentation without hands-on will get you nowhere!
+# Theory wont get you anywhere without practice
 
-I wanted to try my hand at deploying actual infra by taking my previously done labs and using my lab notes from AZ 305.
-Not gonna lie, did not expect what i walked in on, but in the best way possible!
+I wanted to try my hand at deploying actual infra by taking my previously done labs and using my lab notes from my other repo as well as my experience in studying for AZ-104.
+Not gonna lie, did not expect what i walked in on, but in the best way possible.
 
-I did say in AZ 305 readme that i meant it when i said im genuinely pursuing to become Solutions architect, and I will.
+I mean sure it can be frustrating, lots of trial and error, running into walls, switching regions, deployment failures, switching SKUs, forgetting passwords, endless terraform/bicep reading...HOWEVER!
+The satisfaction of finally seeing all the puzzle pieces together and making that final deployment is amazing.
 
-I mean sure it can be frustrating, lots of trial and error, running into walls, switching regions, deployment failures, switching SKUs, forgetting passwords...HOWEVER!
-The satisfaction of finally seeing that green checkmark after so many trials and errors is... satisfying to say the least haha.
-
-Anyway, below i have listed my automation and deployment projects, enjoy!
-
-
+Anyway, below i have listed my automation and deployment projects as portfolio.
 
 
 # Azure Lab Automation
 
-This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for Azure learning projects.
+This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for Azure learning projects as well as other projects.
 
 ## Table of Contents
 
-* [Lab 01: Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
-* [Lab 02: Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
-* [Lab 05: Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
+* [Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
+* [Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
+* [Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
 
 ---
 
-## Lab 01: Automated Nginx Deployment
+## Project: Automated Nginx Deployment
 
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
 
 **Tech Stack**
 - **Language:** Bicep (Infrastructure as Code)
 - **Automation:** GitHub Actions
-- **Security:** OIDC (Federated Credentials) — no stored passwords
+- **Security:** OIDC (Federated Credentials); no stored passwords
 
 **Features**
 - Automated region selection
@@ -41,7 +37,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 **How to Run**
 
-> The "Run Workflow" button is only visible to me as the owner. To test this yourself, fork this repository and add your own `AZURE_CREDENTIALS` secret.
+> To test this yourself, fork this repository and add your own `AZURE_CREDENTIALS` secret.
 
 1. Go to the Actions tab
 2. Select Deploy Lab 01
@@ -51,7 +47,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ---
 
-## Lab 02: Automated Resource Group Manager
+## Project: Automated Resource Group Manager
 
 **Goal:** Deploy a core Azure Resource Group programmatically using the Azure SDK for Python, ensuring cost accountability and governance through mandatory tagging.
 
@@ -82,7 +78,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ---
 
-## Lab 05: Terraform Azure Foundation
+## Project: Terraform Azure Foundation
 
 **Goal:** Deploy a complete Azure infrastructure foundation using Terraform — VNet, NSG, Storage Account, and VM. No portal clicks.
 
