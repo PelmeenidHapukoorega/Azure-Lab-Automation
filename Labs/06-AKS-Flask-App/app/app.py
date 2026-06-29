@@ -9,10 +9,10 @@ app = Flask(__name__)
 def get_pod_count():
     try:
         config.load_incluster_config()
-        v1 = client.coreV1Api()
+        v1 = client.CoreV1Api()
         pods = v1.list_namespaced_pod(
             namespace="default",
-            label_selector="app=SimpleMetrics"
+            label_selector="app=simpleMetrics"
         )
         return len([p for p in pods.items if p.status.phase == "Running"])
     except Exception:
