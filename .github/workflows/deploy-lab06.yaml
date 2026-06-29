@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 env:
-  ACR_NAME: simpleMetricsregistry
+  ACR_NAME: simplemetricsregistry
   AKS_CLUSTER: simplemetrics-aks 
   RESOURCE_GROUP: simplemetrics-rg 
   IMAGE_NAME: simplemetrics
