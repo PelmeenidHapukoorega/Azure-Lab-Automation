@@ -343,7 +343,7 @@
     function updateDudes(count) {
         if (count === currentPodCount) return;
         currentPodCount = count;
-        document.getElementById('dude-count'),textContent = count;
+        document.getElementById('dude-count').textContent = count;
         const track = document.getElementById('dude-track');
         track.innerHTML = '';
         for (let i = 0; i < count; i++) {
@@ -355,7 +355,7 @@
             dude.style.animationDuration = duration + 's';
             dude.style.animationDelay = delay + 's';
             dude.style.bottom = (i * 8) + 'px';
-            track.appenChild(dude);
+            track.appendChild(dude);
         }
     }
 
