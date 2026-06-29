@@ -14,6 +14,9 @@ def get_pod_count():
             namespace="default",
             label_selector="app=simplemetrics"
         )
+        print(f"Found {len(pods.items)} pods total")
+        for p in pods.items:
+            print(f"Pod: {p.metadata.name}, Phase: {p.status.phase}")
         running = [p for p in pods.items if p.status.phase == "Running"]
         return len(running)
     except Exception as e:
