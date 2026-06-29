@@ -25,7 +25,7 @@ def index():
 @app.route("/info")
 def info():
     return jsonify({
-        "pod_name": os.environ.get("Podrick", "unknown"),
+        "pod_name": os.environ.get("POD_NAME", "unknown"),
         "pod_count": get_pod_count(),
         "status": "running"
     })
@@ -40,7 +40,7 @@ def load():
     result = sum(math.factorial(i) for i in range(1, 500))
     duration = round(time.time() - start, 4)
     return jsonify({
-        "pod_name": os.environ.get("Podrick", "unknown"),
+        "pod_name": os.environ.get("POD_NAME", "unknown"),
         "computation": "factorial sum 1-500",
         "duration_seconds": duration,
         "result_length": len(str(result))
