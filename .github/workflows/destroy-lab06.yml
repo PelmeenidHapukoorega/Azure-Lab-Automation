@@ -1,0 +1,44 @@
+name: Destroy Lab 06 - SimpleMetrics AKS
+
+on: 
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env: 
+  AKS_CLUSTER: simplemetrics-aks
+  RESOURCE_GROUP: simplemetrics-rg
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --name ${{ env.AKS_CLUSTER }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --overwrite-existing
+
+      - name: Remove Kubernetes resources
+        run: |
+          kubectl delete -f Labs/06-AKS-Flask-App/manifests/ --ignore-not-found=true
+
+      - name: Terraform destroy
+        working-directory: Labs/06-AKS-FLask-App/terraform
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          terraform init
+          terraform destroy -auto-approve
