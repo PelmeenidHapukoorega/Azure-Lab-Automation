@@ -43,11 +43,13 @@ def health():
 @app.route("/load")
 def load():
     start = time.time()
-    result = sum(math.factorial(i) for i in range(1, 500))
+    result = sum(math.factorial(i) for i in range(1, 2000))
+    for _ in range(100):
+        result = sum(math.factorial(i) for i in range(1, 500))
     duration = round(time.time() - start, 4)
     return jsonify({
         "pod_name": os.environ.get("POD_NAME", "unknown"),
-        "computation": "factorial sum 1-500",
+        "computation": "factorial sum 1-2000 x100",
         "duration_seconds": duration,
         "result_length": len(str(result))
     })
