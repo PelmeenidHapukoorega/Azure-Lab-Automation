@@ -161,11 +161,14 @@
             display: flex;
             justify-content: space-between;
             padding: 0.3rem 0;
+            gap: 0.5rem;
         }
 
         .load-result .metric span:last-child {
             color: #58a6ff;
             font-weight: 500;
+            text-align: right;
+            word-break: break-all;
         }
 
         .spinner {
@@ -219,8 +222,8 @@
         }
 
         @keyframes walk {
-            0% { left: -60px; }
-            100% { left: 110%; }
+            0% { left: 110%; }
+            100% { left: -60px; }
         }
     </style>
 </head>
