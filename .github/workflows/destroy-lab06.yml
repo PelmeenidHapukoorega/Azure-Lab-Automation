@@ -35,6 +35,17 @@ jobs:
         run: |
           kubectl delete -f Labs/06-AKS-Flask-App/manifests/ --ignore-not-found=true
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform destroy
+        working-directory: Labs/06-AKS-Flask-App/terraform
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          terraform init
+          terraform destroy -auto-approve
+
       - name: Terraform destroy
         working-directory: Labs/06-AKS-Flask-App/terraform
         env:
