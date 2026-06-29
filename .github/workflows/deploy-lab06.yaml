@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 env:
-  ACR_NAME: simpleMetricsregistry
+  ACR_NAME: simplemetricsregistry
   AKS_CLUSTER: simplemetrics-aks 
   RESOURCE_GROUP: simplemetrics-rg 
   IMAGE_NAME: simplemetrics
@@ -39,15 +39,20 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Log in to ACR
-      run: az acr login --name ${{ env.ACR_NAME }}
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.ACR_NAME }}.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
 
     - name: Build and push Docker image
-      run: |    
-        docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest \
-            Labs/06-AKS-Flask-App/app/
-          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+      run: |
+        docker build \
+          -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest \
+          Labs/06-AKS-Flask-App/app/
+        docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
 
     - name: Get AKS credentials 
       run: |
