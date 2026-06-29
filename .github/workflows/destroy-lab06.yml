@@ -50,6 +50,7 @@ jobs:
         working-directory: Labs/06-AKS-Flask-App/terraform
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
         run: |
           terraform init
           terraform destroy -auto-approve
