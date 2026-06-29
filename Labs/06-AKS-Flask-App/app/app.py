@@ -12,10 +12,12 @@ def get_pod_count():
         v1 = client.CoreV1Api()
         pods = v1.list_namespaced_pod(
             namespace="default",
-            label_selector="app=simpleMetrics"
+            label_selector="app=simplemetrics"
         )
-        return len([p for p in pods.items if p.status.phase == "Running"])
-    except Exception:
+        running = [p for p in pods.items if p.status.phase == "Running"]
+        return len(running)
+    except Exception as e:
+        print(f"Pod count error: {e}")
         return 1
 
 @app.route("/")
@@ -24,9 +26,10 @@ def index():
    
 @app.route("/info")
 def info():
+    count = get_pod_count()
     return jsonify({
         "pod_name": os.environ.get("POD_NAME", "unknown"),
-        "pod_count": get_pod_count(),
+        "pod_count": count,
         "status": "running"
     })
 
