@@ -240,9 +240,10 @@
      <div class="panel">
         <h2> Pod info</h2>
         <div class="info-row">
-            <span> Pod Name</span>
-            <span id="pod-name">-</span>
-        </div>
+    <span>This Pod</span>
+    <span id="pod-name">—</span>
+</div>
+<div id="pod-names-list"></div>
         <div class="info-row">
             <span>Running Pods</span>
             <span id="pod-count">-</span>
@@ -297,6 +298,14 @@
             document.getElementById('pod-count').textContent = data.pod_count;
             document.getElementById('pod-status').textContent = data.status;
             updateDudes(data.pod_count);
+            const namesList = document.getElementById('pod-names-list');
+            if (data.pod_names) {
+                namesList.innerHTML = data.pod_names.map(name => `
+                    <div class="info-row">
+                        <span style="color: var(--color-text-tertiary); font-size: 11px;">${name}</span>
+                    </div>
+                `).join('');
+            }
         } catch (e) {
             document.getElementById('pod-status').textContent = 'Error';
         }

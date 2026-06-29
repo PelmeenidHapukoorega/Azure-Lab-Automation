@@ -26,13 +26,27 @@ def get_pod_count():
 @app.route("/")
 def index():
     return render_template("index.html")
-   
+
+def get_pod_names():
+    try:
+        config.load_incluster_config()
+        v1 = client.CoreV1Api()
+        pods = v1.list_namespaced_pod(
+            namespace="default",
+            label_selector="app=simplemetrics"
+        )
+        return [p.metadata.name for p in pods.items if p.status.phase == "Running"]
+    except Exception as e:
+        print(f"Pod names error: {e}")
+        return [os.environ.get("POD_NAME", "unknown")]
+    
 @app.route("/info")
 def info():
-    count = get_pod_count()
+    pod_names = get_pod_names()
     return jsonify({
         "pod_name": os.environ.get("POD_NAME", "unknown"),
-        "pod_count": count,
+        "pod_count": len(pod_names),
+        "pod_names": pod_names,
         "status": "running"
     })
 
