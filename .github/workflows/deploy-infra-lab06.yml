@@ -1,0 +1,49 @@
+name: Deploy Infra Lab 06 - SimpleMetrics AKS
+
+on: 
+  workflow_dispatch:
+
+permissions:
+  id_token: write
+  contents: read
+
+env: 
+  RESOURCE_GROUP: simplemetrics-rg
+  AKS_CLUSTER: simplemetrics-aks
+
+jobs:
+  deploy-infrastructure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with: 
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init and apply
+        working-directory: Labs/06-AKS-Flask-App/terraform
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+        run: |
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --name ${{ env.AKS_CLUSTER }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --overwrite-existing
+
+      - name: Enable ACR admin
+        run: |
+          az acr update --name simplemetricsregistry --admin-enabled true
+
