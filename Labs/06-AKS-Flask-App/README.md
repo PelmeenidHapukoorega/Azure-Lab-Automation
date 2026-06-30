@@ -4,6 +4,20 @@ This project was me trying my hand at AKS.
 
 The purpose of it was to use AKS to deploy my app to the web and then load test it to see cluster autoscale work in real time, with the addition of getting information about the pods, their health, names etc.
 
+## Live demo evidence
+
+**Infrastructure deployed in Azure:**
+![Resources](architecture/resources-deployed.png)
+
+**CI/CD pipelines — infrastructure and app deploy:**
+![Infra Pipeline](architecture/infra-pipeline-success.png)
+![App Pipeline](architecture/app-pipeline-success.png)
+
+**HPA scaling under load — CPU at 394%, scaling 2 → 10 pods:**
+![HPA Scaling](architecture/hpa-scaling.png)
+
+**App at peak load — 10 pods running, all visible in UI:**
+![Peak Load](architecture/peak-load-demo.png)
 ## What this deploys
 
 ### Azure Infrastructure
@@ -200,3 +214,48 @@ az aks get-credentials --name simplemetrics-aks --resource-group simplemetrics-r
 **4. Destroy everything**: manual trigger
 
 GitHub Actions → Destroy Lab 06 → Run workflow
+
+## Useful commands
+
+```bash
+# Get ingress IP
+kubectl get ingress
+
+# Watch pods
+kubectl get pods --watch
+
+# Watch HPA scaling in real time
+kubectl get hpa --watch
+
+# Check pod logs
+kubectl logs <pod-name> --tail=50
+
+# Describe ingress (debug routing issues)
+kubectl describe ingress simplemetrics
+
+# Run load test from terminal
+while true; do curl -s http://<INGRESS_IP>/load > /dev/null; done
+
+# Refresh local kubectl credentials after infrastructure deploy
+az aks get-credentials --name simplemetrics-aks --resource-group simplemetrics-rg --overwrite-existing
+
+# Check Application Gateway status
+az network application-gateway show \
+  --name simplemetrics-agw \
+  --resource-group MC_simplemetrics-rg_simplemetrics-aks_westeurope \
+  --query "{Name:name,State:operationalState}" \
+  --output table
+
+# Start Application Gateway if stopped
+az network application-gateway start \
+  --name simplemetrics-agw \
+  --resource-group MC_simplemetrics-rg_simplemetrics-aks_westeurope
+```
+
+## Project links
+
+- [Code](./)
+- [App](./app/)
+- [Terraform](./terraform/)
+- [Manifests](./manifests/)
+- [Workflows](../../.github/workflows/)
