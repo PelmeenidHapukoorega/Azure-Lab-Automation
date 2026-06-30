@@ -2,6 +2,10 @@
 
 Deploy Linux VM with Nginx installed automatically on startup: No manual configuration, no portal. Push to GitHub and the infrastructure deploys itself.
 
+## Architecture
+
+![Architecture Diagram](architecture/diagram.png)
+
 ## What this deploys
 
 | Resource | Name | Purpose |
