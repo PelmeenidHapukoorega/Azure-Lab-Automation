@@ -18,6 +18,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 * [Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
 * [Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
 * [Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
+* [AKS Flask App](#aks-flask-app)
 
 ---
 
@@ -106,3 +107,21 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 ```
 
 [README](Labs/05-Terraform-Foundation/terraform/README.md) | [Code](Labs/05-Terraform-Foundation/terraform/)
+
+## AKS Flask App
+
+**Goal:** Deploy a containerised Flask app to Azure Kubernetes Service, expose it publicly via Application Gateway, and demonstrate live autoscaling under load.
+
+**Tech Stack**
+- Python Flask, Docker
+- Azure Kubernetes Service (AKS)
+- Terraform (IaC)
+- GitHub Actions (CI/CD)
+- Azure Monitor, Log Analytics, Key Vault
+
+**Highlights**
+- Horizontal Pod Autoscaler scales from 2 to 10 pods under load, visible live in the UI
+- Three separate GitHub Actions workflows: deploy infrastructure, deploy app, destroy everything
+- Full RBAC setup across Azure and Kubernetes
+
+[README](Labs/06-AKS-Flask-App/README.md) | [Code](Labs/06-AKS-Flask-App/)
