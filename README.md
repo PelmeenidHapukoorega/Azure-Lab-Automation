@@ -8,21 +8,22 @@ The satisfaction of finally seeing all the puzzle pieces together and making tha
 
 Anyway, below i have listed my automation and deployment projects as portfolio.
 
-
 # Azure Lab Automation
 
 This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for Azure learning projects as well as other projects.
 
 ## Table of Contents
 
-* [Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
-* [Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
-* [Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
-* [AKS Flask App](#aks-flask-app)
+1. [Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
+2. [Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
+3. [App Service Deployment](#lab-03-app-service-deployment)
+4. [Multi-Region Database Deployment](#lab-04-multi-region-database-deployment)
+5. [Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
+6. [AKS Flask App](#lab-06-aks-flask-app)
 
 ---
 
-## Project: Automated Nginx Deployment
+## Lab 01: Automated Nginx Deployment
 
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
 
@@ -44,11 +45,11 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 2. Select Deploy Lab 01
 3. Click Run Workflow and choose your target region
 
-[Code](Labs/01-Nginx-Server/main.bicep)
+[README](Labs/01-Nginx-Server/README.md) | [Code](Labs/01-Nginx-Server/main.bicep)
 
 ---
 
-## Project: Automated Resource Group Manager
+## Lab 02: Automated Resource Group Manager
 
 **Goal:** Deploy a core Azure Resource Group programmatically using the Azure SDK for Python, ensuring cost accountability and governance through mandatory tagging.
 
@@ -75,11 +76,63 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 ```
 3. The script will confirm the full lifecycle in terminal output: list existing RGs, create `Python-Managed-RG` with tags, then delete it.
 
-[Code](Labs/02-Resource-Group-Manager/resource_manager.py)
+[README](Labs/02-Resource-Group-Manager/README.md) | [Code](Labs/02-Resource-Group-Manager/resource_manager.py)
 
 ---
 
-## Project: Terraform Azure Foundation
+## Lab 03: App Service Deployment
+
+**Goal:** Deploy an Azure App Service environment using Bicep modules with environment-aware configuration.
+
+**Tech Stack**
+- **Language:** Bicep with modules
+- **Automation:** GitHub Actions
+- **Security:** OIDC (Federated Credentials)
+
+**Features**
+- Modular Bicep structure — App Service logic separated into a reusable module
+- Environment-aware SKU selection — free tier for nonprod, premium for prod
+- Globally unique resource naming via `uniqueString()`
+
+**How to Run**
+
+> To test this yourself, fork this repository and add your own `AZURE_CREDENTIALS` secret.
+
+1. Go to the Actions tab
+2. Select Deploy Lab 2 - App Service
+3. Click Run Workflow
+
+[README](Labs/03-AppService/README.md) | [Code](Labs/03-AppService/main.bicep)
+
+---
+
+## Lab 04: Multi-Region Database Deployment
+
+**Goal:** Deploy Azure SQL databases and virtual networks across three regions simultaneously using Bicep loops.
+
+**Tech Stack**
+- **Language:** Bicep with modules and loops
+- **Automation:** GitHub Actions
+- **Security:** OIDC (Federated Credentials)
+
+**Features**
+- Single template deploys to West Europe, East US 2, and East Asia in one run
+- Bicep `for` loops for multi-region iteration
+- Production-only SQL auditing with dedicated storage account
+
+**How to Run**
+
+> To test this yourself, fork this repository and add your own `AZURE_CREDENTIALS`, `SQL_ADMIN_LOGIN`, and `SQL_PASSWORD` secrets.
+
+1. Go to the Actions tab
+2. Select Deploy Lab 3 - Database
+3. Click Run Workflow
+
+[README](Labs/04-Database/README.md) | [Code](Labs/04-Database/database.bicep)
+
+---
+
+## Lab 05: Terraform Azure Foundation
 
 **Goal:** Deploy a complete Azure infrastructure foundation using Terraform — VNet, NSG, Storage Account, and VM. No portal clicks.
 
@@ -94,7 +147,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 ```bash
    cd Labs/05-Terraform-Foundation/terraform
 ```
-2. Create your `terraform.tfvars` (never commit this): subscription_id = "your-subscription-id"
+2. Create your `terraform.tfvars` (never commit this): `subscription_id = "your-subscription-id"`
 3. Deploy:
 ```bash
    terraform init
@@ -106,9 +159,11 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
    terraform destroy
 ```
 
-[README](Labs/05-Terraform-Foundation/terraform/README.md) | [Code](Labs/05-Terraform-Foundation/terraform/)
+[README](Labs/05-Terraform-Foundation/README.md) | [Code](Labs/05-Terraform-Foundation/terraform/)
 
-## AKS Flask App
+---
+
+## Lab 06: AKS Flask App
 
 **Goal:** Deploy a containerised Flask app to Azure Kubernetes Service, expose it publicly via Application Gateway, and demonstrate live autoscaling under load.
 
