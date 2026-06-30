@@ -2,6 +2,10 @@
 
 Python script that manages the full lifecycle of an Azure Resource Group programmatically using the Azure SDK: Create, inspect and delete, all from the terminal with no portal interaction.
 
+## Architecture
+
+![Architecture Diagram](architecture/diagram.png)
+
 ## What this does
 
 Four sequential workflow steps, all executed in a single script run:
