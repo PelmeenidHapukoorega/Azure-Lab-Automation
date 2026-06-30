@@ -2,6 +2,10 @@
 
 Deploy Azure SQL databases and virtual networks across multiple regions simultaneously using Bicep loops: Single template that provisions the same infrastructure in West Europe, East US 2, and East Asia in one deployment.
 
+## Architecture
+
+![Architecture Diagram](architecture/diagram.png)
+
 ## What this deploys
 
 Deployed across three regions simultaneously: `westeurope`, `eastus2`, `eastasia`
