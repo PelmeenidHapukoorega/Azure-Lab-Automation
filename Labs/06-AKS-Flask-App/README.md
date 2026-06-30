@@ -7,17 +7,25 @@ The purpose of it was to use AKS to deploy my app to the web and then load test 
 ## Live demo evidence
 
 **Infrastructure deployed in Azure:**
-![Resources](architecture/resources-deployed.png)
 
-**CI/CD pipelines — infrastructure and app deploy:**
-![Infra Pipeline](architecture/infra-pipeline-success.png)
-![App Pipeline](architecture/app-pipeline-success.png)
+![Resources](architecture/resourcesdeployedaz.PNG)
 
-**HPA scaling under load — CPU at 394%, scaling 2 → 10 pods:**
-![HPA Scaling](architecture/hpa-scaling.png)
+**CI/CD pipeline: infrastructure deploy:**
 
-**App at peak load — 10 pods running, all visible in UI:**
-![Peak Load](architecture/peak-load-demo.png)
+![Infra Pipeline](architecture/infradeployed.PNG)
+
+**CI/CD pipeline: app build and deploy:**
+
+![App Pipeline](architecture/appdocker.PNG)
+
+**HPA scaling under load: CPU at 394%, scaling 2 → 10 pods:**
+
+![HPA Scaling](architecture/HPAScale.PNG)
+
+**App at peak load: 10 pods running, all visible in UI:**
+
+![Peak Load](architecture/finalfullload.PNG)
+
 ## What this deploys
 
 ### Azure Infrastructure
