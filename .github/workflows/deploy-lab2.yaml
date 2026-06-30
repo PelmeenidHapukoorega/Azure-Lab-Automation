@@ -1,9 +1,6 @@
 name: Deploy Lab 2 - App Service
 
 on:
-  push:
-    paths:
-      - 'Labs/03-AppService/**'
   workflow_dispatch:
 
 permissions:

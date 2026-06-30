@@ -1,9 +1,6 @@
 name: Deploy Lab 3 - Database
 
 on:
-  push:
-    paths:
-      - 'Labs/04-Database/**' # Only runs if Lab 3 files change
   workflow_dispatch:
 
 permissions:
