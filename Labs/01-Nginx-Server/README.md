@@ -1,4 +1,4 @@
-# Lab 01 — Automated Nginx Deployment
+# Lab 01: Automated Nginx Deployment
 
 Deploy Linux VM with Nginx installed automatically on startup: No manual configuration, no portal. Push to GitHub and the infrastructure deploys itself.
 
