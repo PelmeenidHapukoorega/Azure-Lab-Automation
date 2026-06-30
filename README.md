@@ -18,6 +18,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 * [Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
 * [Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
 * [Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
+* [AKS Flask App](#aks-flask-app)
 
 ---
 
