@@ -2,6 +2,10 @@
 
 Deploy Azure App Service environment using Bicep modules: Includes a storage account and a web app, with environment-aware configuration that automatically adjusts SKUs between non-production and production.
 
+## Architecture
+
+![Architecture Diagram](architecture/diagram.png)
+
 ## What this deploys
 
 | Resource | Name | Purpose |
