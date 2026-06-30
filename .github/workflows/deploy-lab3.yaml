@@ -31,6 +31,6 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: toy-database-rg
-          template: ./Labs/04-Database/lab3.bicep
+          template: ./Labs/04-Database/database.bicep
           parameters: sqlServerAdministratorLogin=${{ secrets.SQL_ADMIN_LOGIN }} sqlServerAdministratorLoginPassword=${{secrets.SQL_PASSWORD}}
           failOnStdErr: false
