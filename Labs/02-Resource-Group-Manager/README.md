@@ -1,4 +1,4 @@
-# Lab 02 — Automated Resource Group Manager
+# Lab 02: Automated Resource Group Manager
 
 Python script that manages the full lifecycle of an Azure Resource Group programmatically using the Azure SDK: Create, inspect and delete, all from the terminal with no portal interaction.
 
