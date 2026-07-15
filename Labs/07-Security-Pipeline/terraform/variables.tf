@@ -10,7 +10,7 @@ variable "location" {
     default = "westeurope"
 }
 
-variable "subscription.id" {
+variable "subscription_id" {
   description = "AZ subscription ID"
   type = string
 }

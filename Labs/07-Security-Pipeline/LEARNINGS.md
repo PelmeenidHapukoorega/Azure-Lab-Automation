@@ -19,3 +19,7 @@ For now 'ref=main' would be fine since i own both repos but at least now i know 
 Chose standard_D2as_v6 SKU for the VM because its proven to be consistently available in the westeurope region for me and im not doing anything "special".
 
 Note! Requires Gen2 specifically to work with this image
+
+subscription_id variable had typo which caused "no declaration found" error in the main.tf and "unexpected attribut" in tfvars.
+
+Git module source URL had wrong repo name which caused repo not found during init. Need to double check more often.
