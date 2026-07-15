@@ -15,3 +15,7 @@ Wanted to use networking module for vnet/subnet creation to be used for the VM i
 Pinned it to 'ref=main' so that when i ran 'terraform init' it would fetch whatever was currently on the main branch. So if i were to update the module later and push it to main, it would automatically pick those changes. However it could break it unexpectedly. Another method would be to pin it to specific commit SHA which would then point it consistently to use that exact version of the module.
 
 For now 'ref=main' would be fine since i own both repos but at least now i know the difference.
+
+Chose standard_D2as_v6 SKU for the VM because its proven to be consistently available in the westeurope region for me and im not doing anything "special".
+
+Note! Requires Gen2 specifically to work with this image
