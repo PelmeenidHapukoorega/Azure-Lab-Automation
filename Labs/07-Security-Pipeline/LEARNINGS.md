@@ -22,4 +22,6 @@ Git module source URL had wrong repo name which caused repo not found during ini
 
 Next i added SSH open rule deliberately to main.tf for checkov to then flag the code during the check.
 
+Set the `soft_fail` to `false` so that any violation that would occur would block the deploy job.
 
+Then added ssh public key secret to github
