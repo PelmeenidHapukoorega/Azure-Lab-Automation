@@ -10,7 +10,7 @@ terraform {
 
 provider "azurerm" {
   features {}
-  subscription_id = var.subscription.id
+  subscription_id = var.subscription_id
 }
 
 resource "azurerm_resource_group" "this" {
@@ -45,7 +45,7 @@ resource "azurerm_network_interface" "this" {
 
   ip_configuration {
     name = "internal"
-    subnet_id = module/networking.subnet_ids["default"]
+    subnet_id = module.networking.subnet_ids["default"]
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id = azurerm_public_ip.this.id
   }
