@@ -2,11 +2,7 @@
 
 This is where i document my learning in raw format for transparency and genuine showcasing of information retention when building projects.
 
-## AI got it right
-
-## AI got it wrong
-
-## Decisions ive made
+## Decisions i made and errors i ran into
 
 Used 'subscription_id' with no default so the caller would have to supply their own value. It cant have a universal default, if i were to hardcode my sub ID, it would fail immediately for anyone else except me.
 
