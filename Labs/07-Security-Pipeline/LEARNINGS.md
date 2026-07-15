@@ -23,3 +23,5 @@ Note! Requires Gen2 specifically to work with this image
 subscription_id variable had typo which caused "no declaration found" error in the main.tf and "unexpected attribut" in tfvars.
 
 Git module source URL had wrong repo name which caused repo not found during init. Need to double check more often.
+
+Next i added SSH open rule deliberately to main.tf for checkov to then flag the code during the check.
