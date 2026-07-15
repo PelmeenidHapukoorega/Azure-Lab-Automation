@@ -1,6 +1,6 @@
 # Learnings
 
-This is where i document my learning in raw format for transparency and genuine showcasing of information retention when building projects.
+This is where i document my learning per project in raw format for transparency and genuine showcasing of information retention when building projects.
 
 ## Decisions i made and errors i ran into
 
