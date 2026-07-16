@@ -25,3 +25,15 @@ Next i added SSH open rule deliberately to main.tf for checkov to then flag the 
 Set the `soft_fail` to `false` so that any violation that would occur would block the deploy job.
 
 Then added ssh public key secret to github
+
+Ran the security scan and checkov marked more than i initially expected. 
+
+The following was flagged with the addon being my explanations:
+
+1. Network interfaces shouldnt use Public IPs because VM having a public IP would be vulnerable to attacks.
+2. VM extension monitoring agent wasnt installed which meant that there would be no way to know whats happening with the VM internally.
+3. module source should use tag or commit has not `ref=main` however it allows me to pull any future changes automatically, with the tradeoff being at the risk of breaking changes or security regressions without explicit approval. 
+
+ref=main was interesting about being less stable than pinning to commit SHA.
+
+Overall the point was to introduce violation into the code in order to see live how Checkov flags it.
