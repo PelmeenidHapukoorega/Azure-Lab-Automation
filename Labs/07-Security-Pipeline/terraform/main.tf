@@ -80,7 +80,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   }
 }
 
-resource "auzrerm_network_security_rule" "ssh_open" {
+resource "azurerm_network_security_rule" "ssh_open" {
   name = "allow-ssh-open"
   priority = 90
   direction = "Inbound"
