@@ -37,3 +37,10 @@ The following was flagged with the addon being my explanations:
 ref=main was interesting about being less stable than pinning to commit SHA.
 
 Overall the point was to introduce violation into the code in order to see live how Checkov flags it.
+
+I added inline comments to supress CKV_AZURE_119 and CKV_AZURE_50 for the following reasons:
+
+1. Public IP is required for me to be able to demo SSH later on.
+2. Monitoring agent was not relevant to this project, although its nice to have but again not necessary.
+
+Pushed code again and it failed, saw that network security rule resource had a typo "auzerm" which checkov then skipped. Fixed it, pushed the change and security scan flagged the allows-ssh rule instantly thus blocking the deployment.
