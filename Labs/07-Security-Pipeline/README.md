@@ -4,6 +4,10 @@ A Terraform-deployed Linux VM with a GitHub Actions pipeline that runs Checkov s
 
 Built to demonstrate that security gates belong in the pipeline itself, not as an afterthought after deployment.
 
+## Pipeline flow diagram
+
+![Pipeline Flow](architecture/diagram.png)
+
 ## Demo
 
 https://youtu.be/VypXE0ihoI8
