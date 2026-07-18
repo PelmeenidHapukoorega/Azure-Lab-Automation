@@ -44,3 +44,56 @@ I added inline comments to supress CKV_AZURE_119 and CKV_AZURE_50 for the follow
 2. Monitoring agent was not relevant to this project, although its nice to have but again not necessary.
 
 Pushed code again and it failed, saw that network security rule resource had a typo "auzerm" which checkov then skipped. Fixed it, pushed the change and security scan flagged the allows-ssh rule instantly thus blocking the deployment.
+
+Ran the deployment again and it got stuck at "acquiring state lock". It couldnt access it because `allowSharedKeyAccess` was disabled on my tf state ST account so the pipeline was using `ARM_ACCESS_KEY` to auth to the ST account, however key based auth was locked.
+
+Switched terraform from key-based auth to Azure AD using service principal which already had `Storage Blob Data Contributor` on the ST account.
+
+So i added `use_azuread_auth = true` to the backend block in `main.tf` and removed ARM access key for variables.
+
+Ran deployment again and ran into a new issue with `var.ssh_public_key` terraform was waiting for manual input because i made a typo in the variable so i had typed in `publickey` with no '_' and therefore terraform never recieved the value and was waiting on me instead.
+
+Then ran deployment again but it still couldnt aquire state lock because the blob was leased already by the prior run, tried `az storage blob lease break`, `terraform-force-unlock` with the lock ID but failed since lease kept expiring and reacquiring between attempts, eventually it expired and next run was successful.
+
+## Commands used
+
+**Check blob lease**
+```
+az storage blob show \
+--account-name <stAccountName> \
+--container-name <containerName> \
+--blob-name <blobname> \
+--auth-mode login \
+--query "properties.lease" \
+--output table
+```
+
+**Break blob lease**
+```
+az storage blob lease break \
+--account-name <stAccountName> \
+--container-name <containerName> \
+--blob-name <blobname> \
+--auth-mode login 
+--lease-break-period 0
+```
+
+**Force unlock terraform state**
+```
+terraform force-unlock <yourLockId>
+```
+
+**List of blobs in state container**
+```
+az storage blob list \
+--account-name <stAccountName> \
+--container-name <containerName> \
+--auth-mode login \
+--output table
+```
+
+**Check RBAC on storage account**
+```
+az role assignment list \
+--scope "/subscriptions/<subid>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<stAccount>" \
+--output table
