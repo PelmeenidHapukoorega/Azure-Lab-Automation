@@ -3,7 +3,7 @@ name: Security Pipeline = Lab 07
 on:
   push:
     paths:
-      - 'Labs/07-Security-Pipeline/**'
+      - 'Labs/07-Security-Pipeline/terraform/**'
   workflow_dispatch:
 
 jobs:
