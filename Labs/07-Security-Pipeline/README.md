@@ -1,4 +1,4 @@
-# Lab 07 — Security Pipeline
+# Lab 07: Security Pipeline
 
 A Terraform-deployed Linux VM with a GitHub Actions pipeline that runs Checkov security scanning before any infrastructure is provisioned. If Checkov finds violations, the deploy is blocked. Fix the code, push again, pipeline goes green and deploys.
 
