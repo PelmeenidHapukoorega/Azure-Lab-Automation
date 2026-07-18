@@ -6,7 +6,7 @@ Built to demonstrate that security gates belong in the pipeline itself, not as a
 
 ## Demo
 
-///placeholder///
+https://youtu.be/VypXE0ihoI8
 
 ## What this deploys
 
