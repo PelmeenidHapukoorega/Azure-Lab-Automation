@@ -79,17 +79,3 @@ resource "azurerm_linux_virtual_machine" "this" {
     version = "latest"
   }
 }
-
-resource "azurerm_network_security_rule" "ssh_open" {
-  name = "allow-ssh-open"
-  priority = 90
-  direction = "Inbound"
-  access = "Allow"
-  protocol = "Tcp"
-  source_port_range = "22"
-  source_address_prefix = "*"
-  destination_port_range = "22"
-  destination_address_prefix = "*"
-  resource_group_name = azurerm_resource_group.this.name
-  network_security_group_name = "${var.prefix}-nsg"
-}
