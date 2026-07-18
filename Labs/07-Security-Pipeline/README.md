@@ -6,7 +6,7 @@ Built to demonstrate that security gates belong in the pipeline itself, not as a
 
 ## Pipeline flow diagram
 
-![Pipeline Flow](architecture/diagram.png)
+![Pipeline Flow](architecture/pipeline.png)
 
 ## Demo
 
