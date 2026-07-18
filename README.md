@@ -20,7 +20,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 4. [Multi-Region Database Deployment](#lab-04-multi-region-database-deployment)
 5. [Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
 6. [AKS Flask App](#lab-06-aks-flask-app)
-
+7. [Security Pipeline](#lab-07-security-pipeline)
 ---
 
 ## Lab 01: Automated Nginx Deployment
@@ -180,3 +180,23 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Full RBAC setup across Azure and Kubernetes
 
 [README](Labs/06-AKS-Flask-App/README.md) | [Code](Labs/06-AKS-Flask-App/)
+
+---
+
+## Lab 07: Security Pipeline
+
+**Goal:** Demonstrate infrastructure security scanning as a pipeline gate — bad code never reaches Azure.
+
+**Tech Stack**
+- Terraform
+- Checkov (IaC security scanner)
+- GitHub Actions
+- Reusable networking module from [Deployment-templates](https://github.com/PelmeenidHapukoorega/Deployment-templates)
+
+**Highlights**
+- Checkov scans Terraform before any deployment runs
+- Deliberate SSH violation (`0.0.0.0/0` on port 22) blocks the pipeline via `CKV_AZURE_9`
+- Fix the violation, push again — pipeline goes green and VM deploys
+- Suppressed findings documented with inline `#checkov:skip` comments and reasons
+
+[README](Labs/07-Security-Pipeline/README.md) | [Code](Labs/07-Security-Pipeline/)
