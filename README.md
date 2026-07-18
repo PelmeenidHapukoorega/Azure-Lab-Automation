@@ -195,7 +195,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 **Highlights**
 - Checkov scans Terraform before any deployment runs
-- Deliberate SSH violation (`0.0.0.0/0` on port 22) blocks the pipeline via `CKV_AZURE_9`
+- Deliberate SSH violation (`0.0.0.0/0` on port 22) blocks the pipeline via `CKV_AZURE_10`
 - Fix the violation, push again — pipeline goes green and VM deploys
 - Suppressed findings documented with inline `#checkov:skip` comments and reasons
 
