@@ -50,7 +50,7 @@ The deliberate violation was an NSG rule opening SSH (port 22) to `0.0.0.0/0` �
 
 | Check | Finding | Resolution |
 |-------|---------|------------|
-| CKV_AZURE_9 | SSH open to 0.0.0.0/0 | **Deliberate violation** — removed the open NSG rule to demo the gate |
+| CKV_AZURE_10 | SSH open to 0.0.0.0/0 | **Deliberate violation** — removed the open NSG rule to demo the gate |
 | CKV_AZURE_119 | NIC uses a public IP | Suppressed — public IP required for SSH demo access |
 | CKV_AZURE_50 | No VM monitoring agent | Suppressed — not relevant to this project's scope |
 | CKV_TF_1 | Module source not pinned to commit hash | Fixed — pinned to commit SHA `9733a99` |
