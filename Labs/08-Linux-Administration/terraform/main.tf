@@ -45,3 +45,16 @@ resource "azurerm_public_ip" "this" {
   allocation_method = "Static"
   sku = "Standard"
 }
+
+resource "azurerm_network_interface" "this" {
+  name = "${var.prefix}-nic"
+  location = var.location
+  resource_group_name = azurerm_resource_group.this.name
+
+  ip_configuration {
+    name = "internal"
+    subnet_id = module.networking.subnet_ids["default"]
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.this.id
+  }
+}
