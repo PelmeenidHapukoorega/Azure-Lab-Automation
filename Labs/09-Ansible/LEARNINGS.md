@@ -24,6 +24,27 @@ After running init, plan and apply and confirmed the VM was up, i then added my 
 
 Added `inventory.ini` to .gitignore at repos root because i wanted git to ignore it since it contained vms IP. Its just good practice, can never be too safe.
 
+Next i needed to install ansible and i could see 2 ways to approach this:
+
+Option 1: Install ubuntu on WSL through pwsh and then install ansible inside it
+
+Or
+
+Option 2: Run ansible from the VM itself and run it locally against itself.
+
+Decided to go with option 1 because its more realistic when it comes to production set up where ansible would be run from local machine or through CI/CD pipeline, and since im studying for az-400 and want to understand the DevOps side of things, it felt like the logical choice.
+
+Ran `wsl --install -d Ubuntu` on my pc in powershell and downloaded ubuntu and then once installed and logged i proceeded to install ansible.
+
+Once ansible was installed and i had verified it, i needed copy my ssh private key into WSL so ansible could use it, but i ran into the issue of "no such file or directory" so i needed to create the directory for it in the WSL home folder, set the permissions for the `ssh` directory so only i could RW and enter it.
+
+Side not: `.ssh` refuses to work if the folder has loose permissions.
+
+Then i needed to copy my private ssh key from windows into the wsl home directory and then set permissions to RW for the same reason as before: If anyone else can read my private key then SSH refuses to use it by default, its a security req not just preference.
+
+After all that i tested the connection with `ansible webservers -i inventory.ini -m ping`
+
+
 ## Commands used
 
 ## Sources
