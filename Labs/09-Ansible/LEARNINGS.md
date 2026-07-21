@@ -58,6 +58,8 @@ Seperated handlers from regular tasks because if i were to place them inside the
 
 Ran into typo issue in the playbook `linefile` instead of `lineinfile`. Fixed it and ran `cd /mnt/s/Projects/Azure-Lab-Automation/Labs/09-Ansible/ansible` and `ansible-playbook playbook.yml -i inventory.ini` again.
 
+Task were running perfectly until i hit another error "unsupported paramaters for lineinfile, had a typo under line which was line:: with double colon instead of 1 colon... Fixed it and ran the playbook again.
+
 ## Commands used
 
 ## Syntax notes to self
