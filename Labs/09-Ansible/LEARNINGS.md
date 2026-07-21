@@ -62,6 +62,23 @@ Task were running perfectly until i hit another error "unsupported paramaters fo
 
 ## Commands used
 
+## Commands used
+
+`wsl --install -d Ubuntu`: Install Ubuntu on WSL from PowerShell
+`wsl -d Ubuntu`: Open a specific WSL distribution
+`sudo apt update`: Update package list
+`sudo apt install ansible -y`: Install Ansible
+`ansible --version`: Verify Ansible installation
+`mkdir -p ~/.ssh`: Create SSH directory in WSL home folder
+`chmod 700 ~/.ssh`: Set SSH directory permissions, owner only can read write and enter
+`chmod 600 ~/.ssh/id_rsa`: Set private key permissions, owner read and write only, SSH refuses to work if others can read it
+`cp /mnt/c/Users/Mooses/.ssh/id_rsa ~/.ssh/id_rsa`: Copy SSH private key from Windows into WSL
+`ansible webservers -i inventory.ini -m ping`: Test Ansible connectivity to hosts in inventory
+`ansible-playbook playbook.yml -i inventory.ini`: Run a playbook against the inventory
+`az vm start --resource-group <rg> --name <vm>`: Start a deallocated VM
+`az vm deallocate --resource-group <rg> --name <vm>`: Deallocate a VM to stop compute billing
+`git rm --cached <file>`: Remove a file from Git tracking without deleting it locally
+
 ## Syntax notes to self
 
 * `become: true` tells ansible to use sudo for all tasks because installing packages requires root privileges.
@@ -71,3 +88,22 @@ Task were running perfectly until i hit another error "unsupported paramaters fo
 * `notify` triggers handler run at the end of the playbook if task made a change.
 
 ## Sources
+
+### Ansible
+- https://docs.ansible.com/ansible/latest/getting_started/index.html
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/cron_module.html
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_module.html
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html
+
+### fail2ban
+- https://www.fail2ban.org/wiki/index.php/MANUAL_0_8
+
+### WSL
+- https://learn.microsoft.com/en-us/windows/wsl/install
+
+### Git
+- https://git-scm.com/docs/git-rm
