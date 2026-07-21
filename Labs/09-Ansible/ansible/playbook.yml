@@ -1,0 +1,26 @@
+- name: Configure linux server
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: install required packages
+      apt:
+        name:
+          - nginx
+          - fail2ban
+        state: present
+        update_cache: true
+    
+    - name: deploy custom nginx page 
+      copy:
+        content: |
+          <html>
+          <body>
+            <h1>Project 9: Automated Ansible configs</h1>
+            <p>This server was configured automatically by ansible however im its father</p>
+          <body>
+          </html>
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
