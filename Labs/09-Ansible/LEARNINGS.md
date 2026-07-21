@@ -44,7 +44,9 @@ Then i needed to copy my private ssh key from windows into the wsl home director
 
 After all that i tested the connection with `ansible webservers -i inventory.ini -m ping`
 
-Ran into error "Host key verification failed", the error popped up because i hadnt sshd into the vm from WSL before therefore the host was untrustworthy, fixed it by doing it manually and then ran ping again.
+Ran into error "Host key verification failed", the error popped up because i hadnt sshd into the vm from WSL before therefore the host was untrustworthy, fixed it by doing it manually and then ran ping again which then worked and i could move on to writing the playbook.
+
+
 
 
 ## Commands used
