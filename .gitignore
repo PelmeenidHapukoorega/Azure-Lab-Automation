@@ -423,3 +423,5 @@ FodyWeavers.xsd
 .terraform/
 .terraform.lock.hcl
 crash.log
+
+Labs/09-Ansible/ansible/inventory.ini
