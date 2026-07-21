@@ -62,22 +62,20 @@ Task were running perfectly until i hit another error "unsupported paramaters fo
 
 ## Commands used
 
-## Commands used
-
-`wsl --install -d Ubuntu`: Install Ubuntu on WSL from PowerShell
-`wsl -d Ubuntu`: Open a specific WSL distribution
-`sudo apt update`: Update package list
-`sudo apt install ansible -y`: Install Ansible
-`ansible --version`: Verify Ansible installation
-`mkdir -p ~/.ssh`: Create SSH directory in WSL home folder
-`chmod 700 ~/.ssh`: Set SSH directory permissions, owner only can read write and enter
-`chmod 600 ~/.ssh/id_rsa`: Set private key permissions, owner read and write only, SSH refuses to work if others can read it
-`cp /mnt/c/Users/Mooses/.ssh/id_rsa ~/.ssh/id_rsa`: Copy SSH private key from Windows into WSL
-`ansible webservers -i inventory.ini -m ping`: Test Ansible connectivity to hosts in inventory
-`ansible-playbook playbook.yml -i inventory.ini`: Run a playbook against the inventory
-`az vm start --resource-group <rg> --name <vm>`: Start a deallocated VM
-`az vm deallocate --resource-group <rg> --name <vm>`: Deallocate a VM to stop compute billing
-`git rm --cached <file>`: Remove a file from Git tracking without deleting it locally
+* `wsl --install -d Ubuntu`: Install Ubuntu on WSL from PowerShell
+* `wsl -d Ubuntu`: Open a specific WSL distribution
+* `sudo apt update`: Update package list
+* `sudo apt install ansible -y`: Install Ansible
+* `ansible --version`: Verify Ansible installation
+* `mkdir -p ~/.ssh`: Create SSH directory in WSL home folder
+* `chmod 700 ~/.ssh`: Set SSH directory permissions, owner only can read write and enter
+* `chmod 600 ~/.ssh/id_rsa`: Set private key permissions, owner read and write only, SSH refuses to work if others can read it
+* `cp /mnt/c/Users/Mooses/.ssh/id_rsa ~/.ssh/id_rsa`: Copy SSH private key from Windows into WSL
+* `ansible webservers -i inventory.ini -m ping`: Test Ansible connectivity to hosts in inventory
+* `ansible-playbook playbook.yml -i inventory.ini`: Run a playbook against the inventory
+* `az vm start --resource-group <rg> --name <vm>`: Start a deallocated VM
+* `az vm deallocate --resource-group <rg> --name <vm>`: Deallocate a VM to stop compute billing
+* `git rm --cached <file>`: Remove a file from Git tracking without deleting it locally
 
 ## Syntax notes to self
 
