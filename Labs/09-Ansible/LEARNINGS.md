@@ -53,11 +53,12 @@ So i wanted to harden the security even more by disabling root ssh login, change
 
 ## Commands used
 
-## Syntax learning for self
+## Syntax notes to self
 
 * `become: true` tells ansible to use sudo for all tasks because installing packages requires root privileges.
 * `state: present` tells ansible to make sure packages listed would exist on the system, it find there are no packages it will install them and if they do it does nothing.
 * `update_cache: true` runs apt update before installing and therefore installs the newest versions available.
+* `www-data` is the user that nginx runs as and ensures that it can always read and serve the file.
 
 
 ## Sources
