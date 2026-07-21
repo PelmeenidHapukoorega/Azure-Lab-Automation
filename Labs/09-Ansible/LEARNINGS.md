@@ -50,6 +50,9 @@ Before writing the playbook, i wanted to try my hand at smt bit more interesting
 
 So i wanted to harden the security even more by disabling root ssh login, change the ssh to non standard port and configure fail2ban to automatically block IPs that fail too many login attempts.
 
+During the playbook writing i noticed that my inventory.ini was visible on github so i backtracked quickly to see where i went wrong and i noticed that when i created the initial folder structure and ran git add labs ansible, it then picked up everything in that folder including that file before i had added it to `.gitignore`. The lesson here is to always add sensitive files to gitignore BEFORE creating them.
+
+Fixed it by removing it entirely from tracking. It doesnt stop ansible from reading it tho since it exists on local pc anyway.
 
 ## Commands used
 
