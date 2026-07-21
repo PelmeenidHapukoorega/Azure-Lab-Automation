@@ -21,6 +21,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 5. [Terraform Azure Foundation](#lab-05-terraform-azure-foundation)
 6. [AKS Flask App](#lab-06-aks-flask-app)
 7. [Security Pipeline](#lab-07-security-pipeline)
+8. [Linux Administration](#lab-08-linux-administration)
 ---
 
 ## Lab 01: Automated Nginx Deployment
@@ -200,3 +201,22 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Suppressed findings documented with inline `#checkov:skip` comments and reasons
 
 [README](Labs/07-Security-Pipeline/README.md) | [Code](Labs/07-Security-Pipeline/)
+
+---
+
+## Lab 08: Linux Administration
+
+**Goal:** Hands on Linux administration as the foundation for Ansible and configuration management.
+
+**Tech Stack**
+- Terraform (VM provisioning)
+- Ubuntu 22.04 LTS
+- nginx, systemd, cron, Bash
+
+**Highlights**
+- User management, file permissions, service lifecycle
+- Bash scripting with cron automation
+- nginx installation and configuration
+- Azure Monitor Agent extension deployed via Terraform
+
+[README](Labs/08-Linux-Administration/README.md) | [Code](Labs/08-Linux-Administration/)
