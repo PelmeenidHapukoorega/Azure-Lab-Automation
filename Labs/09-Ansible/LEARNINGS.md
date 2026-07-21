@@ -20,6 +20,10 @@ Forgot to create tfvars file where you define subscription id and ssh public key
 
 SSH public key here is irrelevant because its public (clue is in the name)
 
+After running init, plan and apply and confirmed the VM was up, i then added my vm ip to ansible in order for ansible understand where to connect to, which user to use and what SSH key to authenticate with.
+
+Added `inventory.ini` to .gitignore at repos root because i wanted git to ignore it since it contained vms IP. Its just good practice, can never be too safe.
+
 ## Commands used
 
 ## Sources
