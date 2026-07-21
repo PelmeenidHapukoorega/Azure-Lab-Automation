@@ -6,7 +6,7 @@ Not gonna lie, did not expect what i walked in on, but in the best way possible.
 I mean sure it can be frustrating, lots of trial and error, running into walls, switching regions, deployment failures, switching SKUs, forgetting passwords, endless terraform/bicep reading...HOWEVER!
 The satisfaction of finally seeing all the puzzle pieces together and making that final deployment is amazing.
 
-Anyway, below i have listed my automation and deployment projects as portfolio.
+* Update July 2026: Repo has grown quite a bit since i first started. See the labs below for where things have ended up so far.
 
 # Azure Lab Automation
 
