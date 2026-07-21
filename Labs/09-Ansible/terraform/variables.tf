@@ -1,7 +1,7 @@
 variable "prefix" {
   description = "naming prefix for all resources"
   type = string
-  default = "lab8"
+  default = "lab9"
 }
 
 variable "location" {

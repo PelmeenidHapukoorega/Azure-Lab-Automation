@@ -46,9 +46,18 @@ After all that i tested the connection with `ansible webservers -i inventory.ini
 
 Ran into error "Host key verification failed", the error popped up because i hadnt sshd into the vm from WSL before therefore the host was untrustworthy, fixed it by doing it manually and then ran ping again which then worked and i could move on to writing the playbook.
 
+Before writing the playbook, i wanted to try my hand at smt bit more interesting besides just having it install nginx, configure user with permission, cron job and everything else i did in the last lab.
 
+So i wanted to harden the security even more by disabling root ssh login, change the ssh to non standard port and configure fail2ban to automatically block IPs that fail too many login attempts.
 
 
 ## Commands used
+
+## Syntax learning for self
+
+* `become: true` tells ansible to use sudo for all tasks because installing packages requires root privileges.
+* `state: present` tells ansible to make sure packages listed would exist on the system, it find there are no packages it will install them and if they do it does nothing.
+* `update_cache: true` runs apt update before installing and therefore installs the newest versions available.
+
 
 ## Sources
