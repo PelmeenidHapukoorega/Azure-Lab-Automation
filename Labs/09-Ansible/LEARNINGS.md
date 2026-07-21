@@ -54,6 +54,7 @@ During the playbook writing i noticed that my inventory.ini was visible on githu
 
 Fixed it by removing it entirely from tracking. It doesnt stop ansible from reading it tho since it exists on local pc anyway.
 
+
 ## Commands used
 
 ## Syntax notes to self
@@ -62,6 +63,6 @@ Fixed it by removing it entirely from tracking. It doesnt stop ansible from read
 * `state: present` tells ansible to make sure packages listed would exist on the system, it find there are no packages it will install them and if they do it does nothing.
 * `update_cache: true` runs apt update before installing and therefore installs the newest versions available.
 * `www-data` is the user that nginx runs as and ensures that it can always read and serve the file.
-
+* `notify` triggers handler run at the end of the playbook if task made a change.
 
 ## Sources

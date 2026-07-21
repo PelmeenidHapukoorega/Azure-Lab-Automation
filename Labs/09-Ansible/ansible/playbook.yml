@@ -71,3 +71,49 @@
         minute: "*/5"
         job: "/home/ansibleuser/sysinfo.sh >> /home/ansibleuser/sysinfo.log 2>&1"
         user: ansibleuser
+
+    - name: Ensure nginx is enabled and running
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Ensure ssh is enabled and running
+      service:
+        name: ssh
+        state: started
+        enabled: true
+
+    - name: Disable root ssh login
+      linefile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line:: 'PermitRootLogin no'
+        state: present
+      notify: Restart ssh
+
+    - name: Configure fail2ban for ssh
+      copy:
+        content: |
+         [sshd]
+         enabled = true
+         port = ssh
+         filter = sshd
+         logpath = /var/log/auth.log
+         maxretry = 3
+         bantime = 3600
+         findtime = 600
+        dest: /etc/fail2ban/jail.local
+        mode: '0644'
+      notify: Restart fail2ban
+  
+  handlers:
+    - name: Restart ssh
+      service:
+        name: ssh
+        state: restarted
+
+    - name: Restart fail2ban
+      service:
+        name: fail2ban
+        state: restarted
