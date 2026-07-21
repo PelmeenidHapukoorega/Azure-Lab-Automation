@@ -98,7 +98,7 @@ Task were running perfectly until i hit another error "unsupported paramaters fo
 - https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html
 
 ### fail2ban
-- https://www.fail2ban.org/wiki/index.php/MANUAL_0_8
+- https://fail2ban.readthedocs.io/en/latest/index.html
 
 ### WSL
 - https://learn.microsoft.com/en-us/windows/wsl/install
