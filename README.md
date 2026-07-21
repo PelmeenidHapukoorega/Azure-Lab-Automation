@@ -22,6 +22,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 6. [AKS Flask App](#lab-06-aks-flask-app)
 7. [Security Pipeline](#lab-07-security-pipeline)
 8. [Linux Administration](#lab-08-linux-administration)
+9. [Ansible](#lab-09-ansible)
 ---
 
 ## Lab 01: Automated Nginx Deployment
@@ -220,3 +221,22 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Azure Monitor Agent extension deployed via Terraform
 
 [README](Labs/08-Linux-Administration/README.md) | [Code](Labs/08-Linux-Administration/)
+
+---
+
+## Lab 09: Ansible
+
+**Goal:** Automate everything done manually in Lab 08 using Ansible — one command configures a fresh VM completely.
+
+**Tech Stack**
+- Terraform (VM provisioning)
+- Ansible (configuration management)
+- Ubuntu 22.04 LTS
+
+**Highlights**
+- Single playbook installs nginx, creates users, sets permissions, deploys scripts and cron jobs
+- SSH hardening: root login disabled, fail2ban configured to block after 3 failed attempts
+- Ansible runs from WSL over SSH, no agent required on the target VM
+- Demonstrates the handoff between Terraform (provision) and Ansible (configure)
+
+[README](Labs/09-Ansible/README.md) | [Code](Labs/09-Ansible/)
