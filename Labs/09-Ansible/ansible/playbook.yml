@@ -24,3 +24,23 @@
         owner: www-data
         group: www-data
         mode: '0644'
+
+    - name: create ansibleuser
+      user:
+        name: ansibleuser
+        shell: /bin/bash
+        create_home: true
+        state: present
+
+    - name: add ansibleuser to sudo group
+      user:
+        name: ansibleuser
+        groups: sudo
+        append: true
+
+    - name: Set home directory permissions
+      file:
+        path: /home/ansibleuser
+        owner: ansibleuser
+        group: ansibleuser
+        mode: '0750'
