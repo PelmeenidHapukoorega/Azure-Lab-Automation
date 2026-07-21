@@ -56,7 +56,7 @@ Fixed it by removing it entirely from tracking. It doesnt stop ansible from read
 
 Seperated handlers from regular tasks because if i were to place them inside the task block, SSH would then restart every single time i were to run the playbook but by putting it in a handler and trigger it by `notify` the restart would only happen if i were to make changes in the config. Same logic as with `state: present`.
 
-
+Ran into typo issue in the playbook `linefile` instead of `lineinfile`. Fixed it and ran `cd /mnt/s/Projects/Azure-Lab-Automation/Labs/09-Ansible/ansible` and `ansible-playbook playbook.yml -i inventory.ini` again.
 
 ## Commands used
 

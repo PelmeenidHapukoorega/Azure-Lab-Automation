@@ -85,7 +85,7 @@
         enabled: true
 
     - name: Disable root ssh login
-      linefile:
+      lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^PermitRootLogin'
         line:: 'PermitRootLogin no'
