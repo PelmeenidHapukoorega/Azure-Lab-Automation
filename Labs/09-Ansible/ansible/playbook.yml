@@ -44,3 +44,30 @@
         owner: ansibleuser
         group: ansibleuser
         mode: '0750'
+
+    - name: Deploy sysinfo script
+      copy:
+        content: |
+          #!/bin/bash
+          echo "=== System information ==="
+          echo "Hostname: $(Hostname)"
+          echo "Date: $(date)"
+          echo "Uptime: $(uptime -p)"
+          echo "Logged in users: $(who | wc -l)"
+          echo ""
+          echo "=== Disk usage ==="
+          df -h /
+          echo ""
+          echo "=== Memory usage"
+          free -h 
+        dest: /home/ansibleuser/sysinfo.sh
+        owner: ansibleuser
+        group: ansibleuser 
+        mode: '0755'
+      
+    - name: Set up cron job for sysinfo
+      cron:
+        name: "sysinfo collection"
+        minute: "*/5"
+        job: "/home/ansibleuser/sysinfo.sh >> /home/ansibleuser/sysinfo.log 2>&1"
+        user: ansibleuser
