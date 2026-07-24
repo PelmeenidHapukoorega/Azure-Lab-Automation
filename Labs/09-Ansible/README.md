@@ -4,7 +4,7 @@ Ansible playbook that automates everything done manually in Lab 08. Fresh VM, on
 
 ## Demo
 
-<!-- Demo video coming soon -->
+https://youtu.be/k84SdT5e9mc
 
 ## What the playbook does
 
