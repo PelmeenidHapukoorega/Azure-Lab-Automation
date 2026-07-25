@@ -100,3 +100,24 @@ data "azurerm_log_analytics_workspace" "lab06" {
   name = "simplemetrics-law"
   resource_group_name = "simplemetrics-rg"
 }
+
+resource "azurerm_dashboard_grafana" "grafana" {
+  name = "${var.prefix}-test"
+  resource_group_name = azurerm_resource_group.this.name
+  location = var.location
+  grafana_major_version = 12
+  api_key_enabled = true
+  deterministic_outbound_ip_enabled = true
+  public_network_access_enabled = true
+  sku = "Standard"
+  sku_size = "X1"
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  tags = {
+    Environment = "Test"
+    Project = "Lab10-Grafana"
+  }
+}

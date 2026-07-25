@@ -20,6 +20,7 @@ Although for flexibility the user assigned would be a better option because then
 
 And system assigned works best for cleanup as well.
 
+For this lab i set public network access to `true` since the goal was to set up grafana and see it in action. Now in production env i would set it to false and then set up a private endpoint for it.
 ## Commands used
 
 ## Sources
