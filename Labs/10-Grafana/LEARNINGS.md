@@ -26,6 +26,8 @@ Set the deterministic outbound ip to `true` even tho completely unnecessary for 
 
 During role assignment for grafana i used `azurerm_log_analytics_workspace.lab05.id` for workspace reference until which was a mistake because it would look for a resource created. Added `data` in front of it so it would then look for the existing workspace from the data source.
 
+In my haste of copying the code from previous lab i frogot to remove VM resources and networking module as well as ssh public key and admin username variables since i wasnt going to use a vm for this lab. Fixed it.
+
 
 ## Commands used
 
