@@ -20,7 +20,13 @@ Although for flexibility the user assigned would be a better option because then
 
 And system assigned works best for cleanup as well.
 
-For this lab i set public network access to `true` since the goal was to set up grafana and see it in action. Now in production env i would set it to false and then set up a private endpoint for it.
+For this lab i set public network access to `true` for grafana resource since the goal was to set up grafana and see it in action. Now in production env i would set it to false and then set up a private endpoint for it.
+
+Set the deterministic outbound ip to `true` even tho completely unnecessary for this lab, its good practice for future reference in case i ever need to whitelist it, otherwise if set to `false` id have to update the whitelist everytime because the outbound IP would change.
+
+During role assignment for grafana i used `azurerm_log_analytics_workspace.lab05.id` for workspace reference until which was a mistake because it would look for a resource created. Added `data` in front of it so it would then look for the existing workspace from the data source.
+
+
 ## Commands used
 
 ## Sources

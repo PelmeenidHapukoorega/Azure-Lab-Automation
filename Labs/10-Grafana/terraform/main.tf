@@ -116,8 +116,18 @@ resource "azurerm_dashboard_grafana" "grafana" {
     type = "SystemAssigned"
   }
 
+  azure_monitor_workspace_integrations {
+    resource_id = data.azurerm_log_analytics_workspace.lab06.id
+  }
+
   tags = {
     Environment = "Test"
     Project = "Lab10-Grafana"
   }
+}
+
+resource "azurerm_role_assignment" "MonitoringReader" {
+  scope = data.azurerm_log_analytics_workspace.lab06.id
+  role_definition_name = "Monitoring Reader"
+  principal_id = azurerm_dashboard_grafana.grafana.identity[0].principal_id
 }
