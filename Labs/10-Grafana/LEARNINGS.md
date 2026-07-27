@@ -30,7 +30,7 @@ In my haste of copying the code from previous lab i frogot to remove VM resource
 
 During terraform apply run into an issue where i couldnt deploy grafana on top of AKS infra. Needed a registered provider for it prior `Microsoft.Dashboard`. Fixed it by running `az provider register --namespace Microsoft.Dashboard` then checked few mins later for registering status with `az provider show --namespace Microsoft.Dashboard --query registrationState`.
 
-Ran terraform apply again.
+Ran terraform apply again. Blocked again, this time because i had `azure_monitor_workspace_integration` which is designed for azure monitor workspace not for log analytics. Fixed it by removing the block from Grafana resource, ran apply again and apply went through/
 
 ## Commands used
 
