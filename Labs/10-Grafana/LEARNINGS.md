@@ -24,7 +24,7 @@ For this lab i set public network access to `true` for grafana resource since th
 
 Set the deterministic outbound ip to `true` even tho completely unnecessary for this lab, its good practice for future reference in case i ever need to whitelist it, otherwise if set to `false` id have to update the whitelist everytime because the outbound IP would change.
 
-During role assignment for grafana i used `azurerm_log_analytics_workspace.lab05.id` for workspace reference until which was a mistake because it would look for a resource created. Added `data` in front of it so it would then look for the existing workspace from the data source.
+During role assignment for grafana i used `azurerm_log_analytics_workspace.lab06.id` for workspace reference until which was a mistake because it would look for a resource created. Added `data` in front of it so it would then look for the existing workspace from the data source.
 
 In my haste of copying the code from previous lab i frogot to remove VM resources and networking module as well as ssh public key and admin username variables since i wasnt going to use a vm for this lab. Fixed it.
 
@@ -38,5 +38,24 @@ Edited main.tf scope from data source to subscription. Scoping to log analytics 
 
 ## Commands used
 
+`terraform output endpoint`: Get the Grafana endpoint URL after deployment
+`terraform output -raw id`: Get the raw Grafana resource ID for use in CLI commands
+`az provider register --namespace Microsoft.Dashboard`: Register the Microsoft.Dashboard provider required for Azure Managed Grafana
+`az provider show --namespace Microsoft.Dashboard --query registrationState`: Check if provider registration completed
+`az role assignment list --scope <scope> --output table`: List role assignments on a specific resource
+`az role assignment create --assignee <principal> --role <role> --scope <scope>`: Create a role assignment
+`az role assignment delete --assignee <principal> --role <role> --scope <scope>`: Remove a role assignment
+
 ## Sources
 
+## Sources
+
+### Azure Managed Grafana
+- https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dashboard_grafana
+- https://learn.microsoft.com/en-us/azure/managed-grafana/overview
+
+### Azure Monitor data source in Grafana
+- https://grafana.com/docs/grafana/latest/datasources/azure-monitor/
+
+### Provider registration
+- https://learn.microsoft.com/en-us/azure/azure-resource-manager/troubleshooting/error-register-resource-provider
