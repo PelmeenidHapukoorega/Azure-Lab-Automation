@@ -2,9 +2,7 @@
 
 Azure Managed Grafana connected to an existing Log Analytics workspace, visualizing real AKS metrics from Lab 06.
 
-## Demo
-
-<!-- Demo video coming soon -->
+Opted out from demo video on this one since the end result would be me just showing grafanas UI..
 
 ## What this deploys
 
