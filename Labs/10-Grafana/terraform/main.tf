@@ -47,10 +47,6 @@ resource "azurerm_dashboard_grafana" "grafana" {
     type = "SystemAssigned"
   }
 
-  azure_monitor_workspace_integrations {
-    resource_id = data.azurerm_log_analytics_workspace.lab06.id
-  }
-
   tags = {
     Environment = "Test"
     Project = "Lab10-Grafana"
