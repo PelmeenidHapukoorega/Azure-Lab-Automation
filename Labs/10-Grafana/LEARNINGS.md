@@ -28,6 +28,9 @@ During role assignment for grafana i used `azurerm_log_analytics_workspace.lab05
 
 In my haste of copying the code from previous lab i frogot to remove VM resources and networking module as well as ssh public key and admin username variables since i wasnt going to use a vm for this lab. Fixed it.
 
+During terraform apply run into an issue where i couldnt deploy grafana on top of AKS infra. Needed a registered provider for it prior `Microsoft.Dashboard`. Fixed it by running `az provider register --namespace Microsoft.Dashboard` then checked few mins later for registering status with `az provider show --namespace Microsoft.Dashboard --query registrationState`.
+
+Ran terraform apply again.
 
 ## Commands used
 
