@@ -23,6 +23,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 7. [Security Pipeline](#lab-07-security-pipeline)
 8. [Linux Administration](#lab-08-linux-administration)
 9. [Ansible](#lab-09-ansible)
+10. [Grafana](#lab-10-grafana)
 ---
 
 ## Lab 01: Automated Nginx Deployment
@@ -240,3 +241,23 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Demonstrates the handoff between Terraform (provision) and Ansible (configure)
 
 [README](Labs/09-Ansible/README.md) | [Code](Labs/09-Ansible/)
+
+---
+
+## Lab 10: Grafana
+
+**Goal:** Deploy Azure Managed Grafana and connect it to Lab 06's Log Analytics workspace to visualize real AKS metrics.
+
+**Tech Stack**
+- Terraform
+- Azure Managed Grafana
+- Azure Monitor
+- System-assigned managed identity
+
+**Highlights**
+- Grafana deployed and configured entirely with Terraform
+- System-assigned identity authenticates to Azure Monitor automatically
+- Monitoring Reader scoped to subscription so Grafana can discover all resources
+- Real AKS metrics visualized in a live dashboard
+
+[README](Labs/10-Grafana/README.md) | [Code](Labs/10-Grafana/)
