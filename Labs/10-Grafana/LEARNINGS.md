@@ -32,6 +32,10 @@ During terraform apply run into an issue where i couldnt deploy grafana on top o
 
 Ran terraform apply again. Blocked again, this time because i had `azure_monitor_workspace_integration` which is designed for azure monitor workspace not for log analytics. Fixed it by removing the block from Grafana resource, ran apply again and apply went through/
 
+After apply i went to grafana link using `terraform output endpoint` then got met with no role assigned on the page. Added grafana admin role to my az root admin. After logging in i checked whether the data source azure monitor was connected and went ahead to create a dashboard until i realised i couldnt see my k8s resource to monitor. So i needed to elevate Monitoring reader permissions scope to subscription not only the data source itself, after doing that i could then select any resource under my sub scope and made a dashboard for unused k8s nodes.
+
+Edited main.tf scope from data source to subscription. Scoping to log analytics workspace wasnt enough because grafana needed to discover and read metrics from resources directly and not just query the workspace alone. I.e the scope allowed workspace to see the workspace itself but not within it. Deep i know.
+
 ## Commands used
 
 ## Sources

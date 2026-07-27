@@ -54,7 +54,7 @@ resource "azurerm_dashboard_grafana" "grafana" {
 }
 
 resource "azurerm_role_assignment" "MonitoringReader" {
-  scope = data.azurerm_log_analytics_workspace.lab06.id
+  scope = "/subscriptions/${var.subscription_id}"
   role_definition_name = "Monitoring Reader"
   principal_id = azurerm_dashboard_grafana.grafana.identity[0].principal_id
 }
