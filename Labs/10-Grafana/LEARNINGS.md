@@ -38,13 +38,13 @@ Edited main.tf scope from data source to subscription. Scoping to log analytics 
 
 ## Commands used
 
-`terraform output endpoint`: Get the Grafana endpoint URL after deployment
-`terraform output -raw id`: Get the raw Grafana resource ID for use in CLI commands
-`az provider register --namespace Microsoft.Dashboard`: Register the Microsoft.Dashboard provider required for Azure Managed Grafana
-`az provider show --namespace Microsoft.Dashboard --query registrationState`: Check if provider registration completed
-`az role assignment list --scope <scope> --output table`: List role assignments on a specific resource
-`az role assignment create --assignee <principal> --role <role> --scope <scope>`: Create a role assignment
-`az role assignment delete --assignee <principal> --role <role> --scope <scope>`: Remove a role assignment
+* `terraform output endpoint`: Get the Grafana endpoint URL after deployment
+* `terraform output -raw id`: Get the raw Grafana resource ID for use in CLI commands
+* `az provider register --namespace Microsoft.Dashboard`: Register the Microsoft.Dashboard provider required for Azure Managed Grafana
+* `az provider show --namespace Microsoft.Dashboard --query registrationState`: Check if provider registration completed
+* `az role assignment list --scope <scope> --output table`: List role assignments on a specific resource
+* `az role assignment create --assignee <principal> --role <role> --scope <scope>`: Create a role assignment
+* `az role assignment delete --assignee <principal> --role <role> --scope <scope>`: Remove a role assignment
 
 ## Sources
 
