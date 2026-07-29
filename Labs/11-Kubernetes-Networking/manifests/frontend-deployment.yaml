@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+    template:
+      metadata:
+        lables:
+          app: backend
+      spec:
+        containers:
+        - name: backend
+          image: k8snetacr.azurecr.io/frontend:latest
+          ports:
+          - containerPort: 80
