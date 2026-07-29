@@ -41,3 +41,28 @@ module "networking" {
     { name = "aks-nodes", address_prefixes = ["10.0.1.0/24"] }
   ]
 }
+
+resource "azurerm_kubernetes_cluster" "DeepK8s" {
+  name = "${var.prefix}-aks1"
+  location = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  dns_prefix = "testingAks1"
+
+  default_node_pool {
+    name = "Pool1"
+    node_count = "${var.node_count}"
+    vm_size = "${var.node_vm_size}"
+    vnet_subnet_id = module.networking.subnet_ids["aks-nodes"]
+    min_count = var.node_min_count
+    max_count = var.node_max_count
+    auto_scaling_enabled = true
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  tags = {
+    Environment = "Production"
+  } 
+}
