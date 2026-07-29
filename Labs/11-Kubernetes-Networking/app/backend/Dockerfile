@@ -5,6 +5,3 @@ RUN pip install -r requirements.txt
 COPY app.py .
 EXPOSE 5000
 CMD ["python", "app.py"]
-FROM nginx:alpine
-COPY index.html /usr/share/nginx/html/index.html
-EXPOSE 80
