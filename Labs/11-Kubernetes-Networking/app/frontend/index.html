@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>K8s Networking Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .status { padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .healthy { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Kubernetes Networking Cluster</h1>
+    <p>Frontend is calling the backend service using K8s internal DNS.</p>
+    
+    <div id="status" class="status">Checking behind the curtain...</div>
+
+    <script>
+        fetch('http://backend-service:5000/health')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').className = 'status healthy';
+                document.getElementById('status').innerHTML = 
+                    `Backend Status: ${data.status}<br>Service: ${data.service}<br>Message: ${data.message}`;
+            })
+            .catch(error => {
+                document.getElementById('status').className = 'status error';
+                document.getElementById('status').innerHTML = `Error reaching backend: ${error}`;
+            });
+    </script>
+</body>
+</html>
