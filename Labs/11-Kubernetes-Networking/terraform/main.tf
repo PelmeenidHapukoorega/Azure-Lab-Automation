@@ -73,3 +73,18 @@ resource "azurerm_kubernetes_cluster" "DeepK8s" {
     Environment = "Production"
   } 
 }
+
+resource "azurerm_container_registry" "this" {
+  name = "${var.prefix}acr"
+  resource_group_name = azurerm_resource_group.this.name
+  location = var.location
+  sku = "Basic"
+  admin_enabled = false
+}
+
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  principal_id = azurerm_kubernetes_cluster.DeepK8s.kubelet_identity[0].object_id
+  role_definition_name = "AcrPull"
+  scope = azurerm_container_registry.this.id
+  skip_service_principal_aad_check = true
+}
