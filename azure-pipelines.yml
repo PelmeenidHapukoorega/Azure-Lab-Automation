@@ -1,0 +1,23 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: AzureCLI@2
+    displayName: 'Azure login'
+    inputs:
+      azureSubscription: 'AZ-service connection'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Connected to Azure"
+
+  - script: pip install checkov
+    displayName: 'Install Checkov'
+
+  - script: checkov -d $(Build.SourcesDirectory)/Labs/07-Security-Pipeline/terraform --framework terraform
+    displayName: 'Run Checkov security scan'
