@@ -25,3 +25,8 @@ provider "azurerm" {
   }
   subscription_id = var.subscription_id
 }
+
+resource "azurerm_resource_group" "main" {
+  name = "${var.prefix}-rg"
+  location = var.location
+}
