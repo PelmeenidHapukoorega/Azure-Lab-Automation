@@ -26,7 +26,7 @@ provider "azurerm" {
   subscription_id = var.subscription_id
 }
 
-resource "azurerm_resource_group" "main" {
+resource "azurerm_resource_group" "this" {
   name = "${var.prefix}-rg"
   location = var.location
 }
@@ -37,6 +37,7 @@ module "networking" {
   prefix = var.prefix
   location = var.location
   resource_group_name = azurerm_resource_group.this.name
+  management_allowed_cidr = null
   subnets = [
     { name = "aks-nodes", address_prefixes = ["10.0.1.0/24"] }
   ]
