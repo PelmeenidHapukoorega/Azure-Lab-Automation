@@ -19,5 +19,5 @@ steps:
   - script: pip install checkov
     displayName: 'Install Checkov'
 
-  - script: checkov -d $(Build.SourcesDirectory)/Labs/07-Security-Pipeline/terraform --framework terraform --soft-fail false
+  - script: checkov -d $(Build.SourcesDirectory)/Labs/07-Security-Pipeline/terraform --framework terraform
     displayName: 'Run Checkov security scan'
