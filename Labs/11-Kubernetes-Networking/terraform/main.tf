@@ -51,7 +51,6 @@ resource "azurerm_kubernetes_cluster" "DeepK8s" {
 
   default_node_pool {
     name = "pool1"
-    node_count = "${var.node_count}"
     vm_size = "${var.node_vm_size}"
     vnet_subnet_id = module.networking.subnet_ids["aks-nodes"]
     min_count = var.node_min_count
