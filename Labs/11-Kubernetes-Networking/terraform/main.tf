@@ -50,13 +50,19 @@ resource "azurerm_kubernetes_cluster" "DeepK8s" {
   dns_prefix = "testingAks1"
 
   default_node_pool {
-    name = "Pool1"
+    name = "pool1"
     node_count = "${var.node_count}"
     vm_size = "${var.node_vm_size}"
     vnet_subnet_id = module.networking.subnet_ids["aks-nodes"]
     min_count = var.node_min_count
     max_count = var.node_max_count
     auto_scaling_enabled = true
+  }
+
+  network_profile {
+    network_plugin = "azure"
+    service_cidr = "10.100.0.0/16"
+    dns_service_ip = "10.100.0.10"
   }
 
   identity {
