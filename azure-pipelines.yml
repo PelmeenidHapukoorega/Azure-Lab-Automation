@@ -1,5 +1,7 @@
 trigger:
-  main
+  branches:
+    include:
+      - main
 
 pool:
   vmImage: ubuntu-latest
@@ -8,7 +10,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Azure login'
     inputs:
-      azureSubscription: 'azure-service-connection'
+      azureSubscription: 'AZ-service connection'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
