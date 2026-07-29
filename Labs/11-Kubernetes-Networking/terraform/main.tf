@@ -30,3 +30,14 @@ resource "azurerm_resource_group" "main" {
   name = "${var.prefix}-rg"
   location = var.location
 }
+
+module "networking" {
+  source = "git::https://github.com/PelmeenidHapukoorega/Deployment-templates.git//terraform/modules/networking?ref=9733a99"
+
+  prefix = var.prefix
+  location = var.location
+  resource_group_name = azurerm_resource_group.this.name
+  subnets = [
+    { name = "aks-nodes", address_prefixes = ["10.0.1.0/24"] }
+  ]
+}
