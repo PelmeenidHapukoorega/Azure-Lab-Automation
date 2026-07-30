@@ -14,6 +14,8 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ## Table of Contents
 
+### Foundation Labs section
+
 1. [Automated Nginx Deployment](#lab-01-automated-nginx-deployment)
 2. [Automated Resource Group Manager](#lab-02-automated-resource-group-manager)
 3. [App Service Deployment](#lab-03-app-service-deployment)
@@ -26,6 +28,9 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 10. [Grafana](#lab-10-grafana)
 11. [Kubernetes Networking](#lab-11-kubernetes-networking)
 ---
+
+### Scenario based projects
+
 
 ## Lab 01: Automated Nginx Deployment
 
