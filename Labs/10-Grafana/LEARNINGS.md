@@ -48,8 +48,6 @@ Edited main.tf scope from data source to subscription. Scoping to log analytics 
 
 ## Sources
 
-## Sources
-
 ### Azure Managed Grafana
 - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dashboard_grafana
 - https://learn.microsoft.com/en-us/azure/managed-grafana/overview

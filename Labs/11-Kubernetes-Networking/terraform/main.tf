@@ -31,18 +31,6 @@ resource "azurerm_resource_group" "this" {
   location = var.location
 }
 
-module "networking" {
-  source = "git::https://github.com/PelmeenidHapukoorega/Deployment-templates.git//terraform/modules/networking?ref=9733a99"
-
-  prefix = var.prefix
-  location = var.location
-  resource_group_name = azurerm_resource_group.this.name
-  management_allowed_cidr = null
-  subnets = [
-    { name = "aks-nodes", address_prefixes = ["10.0.1.0/24"] }
-  ]
-}
-
 resource "azurerm_kubernetes_cluster" "DeepK8s" {
   name = "${var.prefix}-aks1"
   location = azurerm_resource_group.this.location
@@ -52,7 +40,6 @@ resource "azurerm_kubernetes_cluster" "DeepK8s" {
   default_node_pool {
     name = "pool1"
     vm_size = "${var.node_vm_size}"
-    vnet_subnet_id = module.networking.subnet_ids["aks-nodes"]
     min_count = var.node_min_count
     max_count = var.node_max_count
     auto_scaling_enabled = true

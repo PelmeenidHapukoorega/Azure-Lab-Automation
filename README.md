@@ -24,6 +24,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 8. [Linux Administration](#lab-08-linux-administration)
 9. [Ansible](#lab-09-ansible)
 10. [Grafana](#lab-10-grafana)
+11. [Kubernetes Networking](#lab-11-kubernetes-networking)
 ---
 
 ## Lab 01: Automated Nginx Deployment
@@ -261,3 +262,24 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Real AKS metrics visualized in a live dashboard
 
 [README](Labs/10-Grafana/README.md) | [Code](Labs/10-Grafana/)
+
+---
+
+## Lab 11: Kubernetes Networking
+
+**Goal:** Understand Kubernetes internal networking by deploying a two-service application and proving inter-service DNS resolution works inside the cluster.
+
+**Tech Stack**
+- Terraform
+- AKS (Azure Kubernetes Service)
+- Azure Container Registry
+- Flask (backend), nginx (frontend)
+- Kubernetes Deployments and Services
+
+**Highlights**
+- Frontend pod calls backend via Kubernetes internal DNS (`backend-service:5000`) — confirmed working with `kubectl exec`
+- Discovered custom NSGs break AKS internal traffic — had to remove networking module and let AKS manage its own networking
+- Kubelet identity changes on every cluster recreate — ACR pull role must be updated each time
+- Internal DNS only resolves inside the cluster — browser cannot resolve Kubernetes service names
+
+[README](Labs/11-Kubernetes-Networking/README.md) | [Code](Labs/11-Kubernetes-Networking/)
