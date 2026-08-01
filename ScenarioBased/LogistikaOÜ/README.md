@@ -225,6 +225,10 @@ Overall? Free at this scale
 
 For enforcing compliance rules automatically i.e encryption at rest, audit logging required, resources deployed in EU region only. Not a one time fix but ongoing GDPR compliance evidence.
 
+**Azure RBAC**
+
+Controls access as in who can access what, only right people can manage right resources in other words granularity. Free and configured via Entra ID and AZ portal.
+
 **Key vault**
 
 Needed centralised management for any API keys the fleet tracking app would use, access logs on KV provide audit traile for credential access.
