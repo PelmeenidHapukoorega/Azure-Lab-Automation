@@ -1,4 +1,4 @@
-# Scenario: Logistika OÜ - Cloud Infrastructure Modernisation
+# Scenario: Cloud Infrastructure Modernisation
 
 ## Company background
 
