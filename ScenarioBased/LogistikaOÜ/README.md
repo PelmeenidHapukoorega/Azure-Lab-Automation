@@ -284,6 +284,8 @@ However worth monitoring over a period of time to get a better estimate using me
 
 # Architecture diagram
 
+![Architecture diagram](./architecture.png)
+
 # Build log
 
 # Incident response
