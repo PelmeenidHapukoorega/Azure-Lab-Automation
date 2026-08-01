@@ -1,38 +1,19 @@
-# Scenario: Logistika OÜ — Cloud Infrastructure Modernisation
+## Scenario based projects
 
-## Company background
+I hit a wall for myself by building projects, i was running out of ideas to dive into or have the ability to genuinely think about the bigger picture. 
 
-Logistika OÜ is a mid-sized Estonian logistics company based in Tallinn with 180 employees. They operate a fleet of 60 delivery vehicles across Estonia and have partnerships with carriers in Latvia and Lithuania. Their annual revenue is approximately €8 million.
+So i decided to use Claude to give me fictional scenarios or case studies with random constraints, wants and budgets. The idea is to push me into the unknown and genuinely think about architecture, trade offs, cost and overall implementation before actually implementing. 
 
-Currently they run everything on-premise — two physical servers in a server room at their Tallinn office, a Windows Server 2016 domain controller, a Linux server running their custom fleet tracking web application (PHP, MySQL), and a NAS for file storage. Their IT is managed by one person who is leaving in two months.
+If i ever want to reach the architect level then i have to make myself think about the bigger picture and reason through as to why X over Y or Z and the tradeoffs. 
 
-They were recently audited and received a non-compliance notice for GDPR — specifically around data retention, access logging, and backup practices. They have 90 days to remediate.
+Another reason is that i wanted to demonstrate that im capable of thinking about the bigger picture and not only that but actually build it and problem solve.
 
-## Current problems
+Now one thing is building infrastructure, thats the dream however thats not how it works in real life. In real life you have someones messy architecture or say an alert comes through and something breaks so what then?
 
-- Single point of failure — if either server goes down, operations stop
-- No offsite backup — the NAS is in the same room as the servers
-- No access logging — they cannot prove who accessed what data
-- The fleet tracking app has no monitoring — they find out it's down when drivers call
-- The IT person manages everything manually — no automation, no documentation
-- VPN access to internal systems is via an old Cisco router that nobody knows how to configure anymore
+Well i decided to use AI agents in this scenario, specifically i plan to create chaos agent, give it access to the environment and have it break something intentionally so i could then go and figure out what broke, why it broke and how do i fix it depending on the situation at hand. 
 
-## What they want
+As to how that will work i have no idea yet, i plan to build up the first project and then focus on creating the chaos agent and make it reusable, the main problem with that most likely at least right now seems to be giving it instructions to break something without me knowing what it will break.
 
-1. Fleet tracking application migrated to Azure and containerised if possible
-2. All employee file storage moved to Azure
-3. Proper backup with offsite retention
-4. Access control — only the right people can access the right things
-5. Remote management without needing to be on-site
-6. Monitoring so they know about problems before drivers do
-7. GDPR compliance remediated — audit logs, data retention policies, encryption at rest
-8. A pipeline so future application updates don't require manual server access
+Since i have no experience and i cant really gain the real experience if im not working in the field then this approach seems to be the closest thing to it.
 
-## Constraints
-
-- Budget: €800/month maximum, prefer closer to €600
-- GDPR remediation must be done within 90 days
-- New IT person has basic Azure knowledge but no DevOps experience
-- Fleet tracking app cannot be down for more than 2 hours during migration
-- Data must remain within the EU
-- Drivers use the tracking app on mobile — must be publicly accessible
+So in short, everything here is written, decided by me and done by me, only thing AI here is the scenarios copy pasted for context and understanding why these projects came to be. 
