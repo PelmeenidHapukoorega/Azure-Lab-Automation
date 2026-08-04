@@ -425,3 +425,5 @@ FodyWeavers.xsd
 crash.log
 
 Labs/09-Ansible/ansible/inventory.ini
+Labs/11-Kubernetes-Networking/terraform/terraform.tfvars
+ScenarioBased/LogistikaOÜ/terraform/terraform.tfvars
