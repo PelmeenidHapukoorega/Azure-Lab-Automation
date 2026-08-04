@@ -288,4 +288,37 @@ However worth monitoring over a period of time to get a better estimate using me
 
 # Build log
 
+**Updated as infra is being built**
+
+Pinned provider `~> 4.0` to avoid silent breaking changes.
+
+Added `use_azuread_auth = true` for backend so instead of storage account keys, EntraId auth would be used for state access which means no shared secrets. 
+
+`prevent_deletion_if_contains_resources = false` on the RG for initial testing. Setting it to `true` once its ready to hit production. But as im developing this and testing each time running terraform block for block then setting it to `false` is just easier to manage. 
+
+Used the same naming convention as in my previous project with `${var.prefix}-rg` which at this scale is fine, since single environment and single project however noted as scaling limitation if dev/prod split would ever be needed.
+
+Now in this code i used my own tfstate container on azure but if it was to be a real project you would create your own tf.state storage account and container to house terraform state so it could check against your current environment on Azure, but in this case since its fictional i was using mine because setting up another subscription to simulate real conditions would add extra time to set up properly.
+
+And to top it all off, using personal subscription for clients state would add access control issues, billing and continuity risks  which would be outside the clients control and we dont want that.
+
+Initial resource list was missing Private DNS zones and without them the endpoints would get a private IP sure but DNS resolution for the resources public FQDN would still resolves publicly by default which would defeat the purpose of the endpoints all together.
+
+I needed 2 private DNS zones per service, so:
+
+* `privatelink.mysql.database.azure.com` for MySQL
+* `privatelink.file.core.windows.net` for storage.
+
+Sized the Vnet as `10.1.0.0/24` giving it room for both subnets + headroom for future ones if needed. App service at `/27` above the documented `/28` min for Vnet integration to specifically leave room in case of scaling the plan to more instances. PEs at `/28` which would cover the 2 PEs with room for more later (Key vault).
+
+Split subnets between the App service and private endpoints, purely for delegation reason when it came to App service itself, why? I wanted the subnet to act as a gateway for the App service so that outbound traffic would route into the VNet and then reach things like MySQLs private endpoint. 
+
+Delegated it exclusively to App serice via `Microsoft.Web/serverFarms` so nothing else could be deployed into that same subnet.
+
+Then i added `subnets/action` to service delegation which would permit Appservice to provision its NIC in the subnet and giving it an actual address inside the Vnet so traffic could reach the PE instead of appearing to come from outside of it. 
+
+Now PEs are configured to only accept connections that come from inside the VNet so without the NIC on the Appservice it would hit the PE from outside and get rejected because it wouldnt have any idea tha the traffic in this case would be the app.
+
+
+
 # Incident response

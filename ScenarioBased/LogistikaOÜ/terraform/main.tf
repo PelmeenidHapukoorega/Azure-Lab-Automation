@@ -30,3 +30,35 @@ resource "azurerm_resource_group" "LogistikaOU" {
   name = "${var.prefix}-rg"
   location = var.location
 }
+
+resource "azurerm_virtual_network" "main" {
+  name = "${var.prefix}-vnet"
+  address_space = [var.vnet_address_space]
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
+resource "azurerm_subnet" "appservice" {
+  name = "${var.prefix}-snet-appservice"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes = [var.appservice_subnet_prefix]
+
+  delegation {
+    name = "appservice-delegation"
+
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    }
+  }
+}
+
+resource "azurerm_subnet" "private-endpoints" {
+  name = "${var.prefix}-snet-pe"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes = [var.pe_subnet_prefix]
+
+  private_endpoint_network_policies = "Disabled"
+}
