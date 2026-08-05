@@ -20,7 +20,7 @@ Wanted to understand how k8s cluster actually works, deployed the cluster and pu
 
 ## What actually worked
 
-* `kubectl exec` into frontend pod calling `http://backend-service:5000/health` returned correct JSON response — proves internal DNS and service routing working correctly.
+* `kubectl exec` into frontend pod calling `http://backend-service:5000/health` returned correct JSON response, proves internal DNS and service routing working correctly.
 
 ## Sources
 
