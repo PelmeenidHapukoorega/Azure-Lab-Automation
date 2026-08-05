@@ -319,6 +319,28 @@ Then i added `subnets/action` to service delegation which would permit Appservic
 
 Now PEs are configured to only accept connections that come from inside the VNet so without the NIC on the Appservice it would hit the PE from outside and get rejected because it wouldnt have any idea tha the traffic in this case would be the app.
 
+Did the first terraform init/plan and deploy to verify resources would deploy with set configurations before moving on. All good.
 
+Moved onto adding NSG resource, why NSG at all? Well for 1 to reuse existing pattern from my other projects and 2ndly for second layer defense and specifically for PE subnet since both PEs are handling sensitive data: App data in MySQL and Employee files in Azure files.
+
+No NSG on appservice since subnet is self limiting by design.
+
+The 2 NSG rules allow inbound traffic for both the DB and file shares and i scoped them respectively:
+
+Set the source destination for app service itself since thats where the inbound traffic would come from to both PEs and from PEs would move forward respectively to DB and file shares.
+
+By scoping the destination itself narrowly instead of leaving it on `"*"` (wildcard) meant the rules would only ever match traffic headed into exclusively to PE subnet. Aka least privilege logic.
+
+Noticed i had `source_address_prefix` and `destination_address_prefix` swapped accidentally and if i wouldnt have clocked it i would have just allowed PE subnet traffic to PE subnet...
+
+TDLR: No valid path to reach Az files since rule matching traffic pattern didnt exist.
+
+Minor mistake but i think its still noteworthy, what caught it was when i was comparing rule sets for both MySQL and Files and noticed they werent consistent so i double checked both to make sure.
+
+Added subnets NSG association resource to main.tf and forgot about referencing PE subnets id.
+
+Without it, it wouldnt have any idea what subnet should be associated with the NSG and its rule sets.
+
+After running plan and deploy again i checked for NSG rules themselves and then seperately checked that the NSG was only associated with the PE subnet and not with Appservice subnet as per design.
 
 # Incident response
