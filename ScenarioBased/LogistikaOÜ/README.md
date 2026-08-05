@@ -349,4 +349,25 @@ In other words, without private zones the fleet tracker app couldnt reach its ow
 
 ran plan again then verified that both zones now existed with VNet links and auto registration disabled.
 
+Added storage account and the file share with 1TB quota, cool tier and ST account at default Hot tier (applies to blob storage at account level, irrelevant here).
+
+Mixed up `FileStorage` instead of `StorageV2` in terraform documentation, FileStorage applies only to premium file shares running on SSDs and i went with HDD instead. StorageV2 supports file shares. 
+
+Set up the `random` provider with `random_string` due to naming constraints on Storage accounts needing all lowercase and unique name. 
+
+At forst i set `special = true` and then setting only the `lower` without disabling others. 
+
+After realising my mistake i set the `lower` to true so it would only use lowercase letters during randomisation and disabled `upper` and `special` i.e set to false so no special or uppercase letters would be used.
+
+
+Then created seperate variable for the ST account `storage_prefix` instead of modifying the `var.prefix` because i would have had to name the prefix in lowercase letters as well and it just didnt make any sense to have other resources listed in lowercase.
+
+Wanted to verify actual quota on the file share itself, turns out no actual readable place for it, you can see the quota itself by editing it on the file shares overview page if needed.
+
+Wanted to have Cold tier for the file share itself, however its unsupported. So transaction optimized, premium were instantly ruled out, and i had to pick between Hot or Cool, went with cool because infrequent access, not high IOPS.
+
+Disabled public access on the storage account level and enforced TLS 1.2.
+
+Thought about enforcing policy for the storage account itself as in who has access to it, but opted out since judging by the case study only a handful of people like 1-2 would actually have to interact with the environment so enforcing policy at a rg/subscription level later made more sense.
+
 # Incident response

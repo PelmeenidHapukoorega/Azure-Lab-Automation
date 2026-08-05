@@ -14,6 +14,10 @@ terraform {
             source = "hashicorp/azurerm"
             version = "~> 4.0"
         }
+        random = {
+            source = "hashicorp/random"
+            version = "~> 3.0"
+        }
     }
 }   
 
@@ -25,6 +29,14 @@ provider "azurerm" {
   }
   subscription_id = var.subscription_id
 }
+
+resource "random_string" "random" {
+  length = 5
+  lower = true
+  upper = false
+  special = false 
+}
+
 
 resource "azurerm_resource_group" "LogistikaOU" {
   name = "${var.prefix}-rg"
@@ -126,4 +138,23 @@ resource "azurerm_private_dns_zone_virtual_network_link" "AzFiles" {
   private_dns_zone_name = azurerm_private_dns_zone.AzureFiles.name
   virtual_network_id = azurerm_virtual_network.main.id
   registration_enabled = false
+}
+
+resource "azurerm_storage_account" "LogistikaST" {
+  name = "${var.storage_prefix}${random_string.random.result}"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  location = azurerm_resource_group.LogistikaOU.location
+  account_kind = "StorageV2"
+  account_tier = "Standard"
+  account_replication_type = "ZRS"
+  min_tls_version = "TLS1_2"
+  public_network_access_enabled = false 
+}
+
+resource "azurerm_storage_share" "Employees" {
+  name = "employeedata"
+  storage_account_id = azurerm_storage_account.LogistikaST.id
+  quota = 1024
+  enabled_protocol = "SMB"
+  access_tier = "Cool"
 }

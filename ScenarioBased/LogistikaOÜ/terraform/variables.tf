@@ -4,6 +4,12 @@ variable "prefix" {
   default = "Log-OU"
 }
 
+variable "storage_prefix" {
+  description = "Naming for ST account" /// Seperate variable here for ST account specifically becayse of naming constraints.
+  type = string
+  default = "logou"
+}
+
 variable "location" {
   description = "Region/Location where resources exist"
   type = string
