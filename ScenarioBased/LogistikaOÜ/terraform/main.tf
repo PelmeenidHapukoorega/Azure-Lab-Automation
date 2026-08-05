@@ -101,3 +101,29 @@ resource "azurerm_subnet_network_security_group_association" "pe-subn-nsg-assoc"
   subnet_id = azurerm_subnet.private-endpoints.id
   network_security_group_id = azurerm_network_security_group.PE-nsg.id
 }
+
+resource "azurerm_private_dns_zone" "MySQL" {
+  name = "privatelink.mysql.database.azure.com"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "MySQL-link" {
+  name = "Database"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  private_dns_zone_name = azurerm_private_dns_zone.MySQL.name
+  virtual_network_id = azurerm_virtual_network.main.id
+  registration_enabled = false
+}
+
+resource "azurerm_private_dns_zone" "AzureFiles" {
+  name = "privatelink.file.core.windows.net"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "AzFiles" {
+  name = "Fileshare"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  private_dns_zone_name = azurerm_private_dns_zone.AzureFiles.name
+  virtual_network_id = azurerm_virtual_network.main.id
+  registration_enabled = false
+}

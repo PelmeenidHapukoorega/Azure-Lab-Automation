@@ -343,4 +343,10 @@ Without it, it wouldnt have any idea what subnet should be associated with the N
 
 After running plan and deploy again i checked for NSG rules themselves and then seperately checked that the NSG was only associated with the PE subnet and not with Appservice subnet as per design.
 
+Added private DNS zones for both the database and file share because otherwise DNS would resolve publicly even tho access would still depend on whether the resources have `public network access` disabled or enabled and even then it wouldnt resolve to the public IP because MySQL accepts private endpoint traffic only. 
+
+In other words, without private zones the fleet tracker app couldnt reach its own database. 
+
+ran plan again then verified that both zones now existed with VNet links and auto registration disabled.
+
 # Incident response
