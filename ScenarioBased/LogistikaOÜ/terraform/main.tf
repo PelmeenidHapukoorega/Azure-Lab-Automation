@@ -75,8 +75,31 @@ resource "azurerm_subnet" "private-endpoints" {
   private_endpoint_network_policies = "Disabled"
 }
 
+resource "azurerm_subnet" "mysql-server" {
+  name = "${var.prefix}-sql"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes = [var.mysql_subnet_prefix]
+
+  delegation {
+    name = "sql"
+    service_delegation {
+      name = "Microsoft.DBforMySQL/flexibleServers"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+      ]
+    }
+  }
+}
+
 resource "azurerm_network_security_group" "PE-nsg" {
   name = "${var.prefix}-nsg-pe"
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
+resource "azurerm_network_security_group" "SQL-nsg" {
+  name = "${var.prefix}-nsg-sql"
   location = azurerm_resource_group.LogistikaOU.location
   resource_group_name = azurerm_resource_group.LogistikaOU.name
 }
@@ -90,9 +113,9 @@ resource "azurerm_network_security_rule" "Inbound-MySQL" {
   source_port_range = "*"
   destination_port_range = "3306"
   source_address_prefix = var.appservice_subnet_prefix /// AppService
-  destination_address_prefix = var.pe_subnet_prefix /// Private endpoint subnet
+  destination_address_prefix = var.mysql_subnet_prefix /// MySQL server subnet
   resource_group_name = azurerm_resource_group.LogistikaOU.name
-  network_security_group_name = azurerm_network_security_group.PE-nsg.name
+  network_security_group_name = azurerm_network_security_group.SQL-nsg.name
 }
 
 resource "azurerm_network_security_rule" "Inbound-AzureFiles" {
@@ -112,6 +135,11 @@ resource "azurerm_network_security_rule" "Inbound-AzureFiles" {
 resource "azurerm_subnet_network_security_group_association" "pe-subn-nsg-assoc" {
   subnet_id = azurerm_subnet.private-endpoints.id
   network_security_group_id = azurerm_network_security_group.PE-nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "sql-subn-nsg-assoc" {
+  subnet_id = azurerm_subnet.mysql-server.id
+  network_security_group_id = azurerm_network_security_group.SQL-nsg.id
 }
 
 resource "azurerm_private_dns_zone" "MySQL" {
@@ -157,4 +185,16 @@ resource "azurerm_storage_share" "Employees" {
   quota = 1024
   enabled_protocol = "SMB"
   access_tier = "Cool"
+}
+
+resource "azurerm_mysql_flexible_server" "FleetTrackerData" {
+  name = "fleetappdata"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  location = azurerm_resource_group.LogistikaOU.location
+  administrator_login = var.mysql_admin_username
+  administrator_password = var.mysql_admin_password
+  backup_retention_days = 30
+  delegated_subnet_id = azurerm_subnet.mysql-server.id
+  private_dns_zone_id = azurerm_private_dns_zone.MySQL.id
+  sku_name = "B_Standard_B1ms"
 }

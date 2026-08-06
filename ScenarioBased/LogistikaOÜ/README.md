@@ -370,4 +370,21 @@ Disabled public access on the storage account level and enforced TLS 1.2.
 
 Thought about enforcing policy for the storage account itself as in who has access to it, but opted out since judging by the case study only a handful of people like 1-2 would actually have to interact with the environment so enforcing policy at a rg/subscription level later made more sense.
 
+Moved onto Mysql server for database and initially i assumed that i would just create the resource and then configure PE for it, however as it turns out Mysql doesnt use PEs at all and instead is locked down by Vnet integration. So that meant i needed to create a seperate subnet for it just like i did for the Appservice before and then delegate it to `Microsoft.DBforMySQL/flexibleServers`.
+
+So now i needed to create new NSG for it and associate it with the new subnet because the SQL server wouldnt exist in the og PE subnet anymore. 
+
+Repurposed the old MySQL rule by changing which NSG it belonged to and updated its destination in the code. Ran terraform plan for it to check if it would now force terraform to destroy and recreate the rule (NSG rules cant be changed in place).
+
+Note to self: Delegation doesnt conflict with NSG, just restricts what resource type can occupy the subnets IP address space in question.
+
+Ran into a small error when running plan again, specifically regarding mysql admin username and password. Username had "Ü" in it which ASCII doesnt support and password had constraints for Upper, special and numeric. Small correction.
+
+After deployment and verifying everything mentioned before, i noticed DB had default storage size set to 20Gib by default, and i started thinking if i should future proof it by adding `auto_grow_enabled` and defining the size to scale to if it reaches the limit but without actually knowing how much data would actually be ingested i wouldnt have any idea so i decided to instead set up the alert later on to fire when it reaches a specified threshold. 
+
+By doing it this way i could analyze the ingestion accurately and then make further decisions from there as to how much more storage to add and if `auto_grow_enabled` would actually be of any use.
+
+TLDR: Observe first, decide later.
+
+
 # Incident response

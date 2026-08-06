@@ -50,3 +50,9 @@ variable "pe_subnet_prefix" {
   type = string
   default = "10.1.0.32/28"
 }
+
+variable "mysql_subnet_prefix" {
+  description = "CIDR for MySQL flexible server delegated subnet"
+  type = string
+  default = "10.1.0.48/28"
+}
