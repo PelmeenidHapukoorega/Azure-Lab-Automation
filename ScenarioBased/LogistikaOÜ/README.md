@@ -386,5 +386,12 @@ By doing it this way i could analyze the ingestion accurately and then make furt
 
 TLDR: Observe first, decide later.
 
+Moved onto adding PE for az files, ran into casing issue for `subresource_names` under private service connection, used File instead of file, checked private endpoint properties docs for the correct one under Azure storage account.
+
+Then ran plan and was surprised because i was met with `MySQL destroy/recreate` then realised i had changed the mysql admin username and just added underscores inbetween, after realising that i knew all was well and since no data was actually in the database yet then having terraform destroy/recreate it wouldnt be an issue. 
+
+Still worth flagging tho, `administrator_login` is immutable after creation, meaning that if changed it would then prompt terraform to run it against current state and detect the difference and force it to be destroyed and then recreate it with new value, not exclusive to admin login, but overall some resources are just immutable after creation and this is just 1 example of it.
+
+So if there would have been data in that and i would have ran the plan it would have destroyed the DB with all data if this was production and i wouldnt have caught it and blindly run it.
 
 # Incident response

@@ -198,3 +198,21 @@ resource "azurerm_mysql_flexible_server" "FleetTrackerData" {
   private_dns_zone_id = azurerm_private_dns_zone.MySQL.id
   sku_name = "B_Standard_B1ms"
 }
+
+resource "azurerm_private_endpoint" "AzFiles" {
+  name = "fileshare-endpoint"
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  subnet_id = azurerm_subnet.private-endpoints.id
+
+  private_service_connection {
+    name = "fileshare-privateserviceconnection"
+    private_connection_resource_id = azurerm_storage_account.LogistikaST.id
+    subresource_names = ["file"]
+    is_manual_connection = false 
+  }
+  private_dns_zone_group {
+    name = "fileshare-dns-zone-group"
+    private_dns_zone_ids = [azurerm_private_dns_zone.AzureFiles.id]
+  }
+}
