@@ -394,4 +394,32 @@ Still worth flagging tho, `administrator_login` is immutable after creation, mea
 
 So if there would have been data in that and i would have ran the plan it would have destroyed the DB with all data if this was production and i wouldnt have caught it and blindly run it.
 
+Added workspace and app insights, chose `PerGB2018` for SKU (default SKU and current Azure standard, 5GB free tier benefit applies on top of it), referenced `workspace_id` on app insights so that once the app was running it would know which workspace to send the logs to.
+
+Since App insights has no default application type for PHP then i landed for `other`, web also was an option but its for Node.js/ASP net so it wasnt a fitting choice here, verified through docs.
+
+B2 for service plan SKU naming pattern was much straight forward in comparison to earlier MySQLs one, just `B2`.
+
+Started thinking about using deployment slots in the app service for the purpose of having staging/prod slots for the app itself so the company could test in staging, verify their changes work and swap to prod. 
+
+Opted out of implementing it since it doesnt fall under any of the constraints or wants from the case study, but i did note it for myself to relay that recommendation for the client.
+
+Ran into bug when redeploying entire infra again (i use terraform destroy every time i end the work for the day to keep the costs down for myself) where the Vnet wasnt linked to MySQL databases private DNS zone. 
+
+Reading through the log i found that both the vnet link for MySQL and the server itself were both started in the same batch, link finished around 35 seconds later while the server was already at 40+ seconds into its own creation.
+
+In short, terraform launched them in parallel because MySQL resource was referencing the private DNS zone itself and no reference to the link itself.
+
+And because it didnt reference it that meant terraform had no reason to wait for any of it and just launched them both.
+
+TLDR: it only infers order from direct attribute references in the code.
+
+To fix it i added `depends_on` to flexible server resource and added `azurerm_private_dns_zone_virtual_network_link.MySQL-link` to it.
+
+Ran plan/apply again, this time the bug was gone but replace by app service unique name constraint. Unfortunately fleettracker name was already being used by someone out there so just added `logistikaou-` in front of it, saved, plan and apply and solved that too.
+
+Briefly considered using `auth_settings_v2` for the linux web app that would ran the app as to how would users authenticate to the app but again opted out because its quite literally not my job how the clients users are authenticating for their own app, it was their own app developers jurisdiction and im sure they got it covered. 
+
+I think its important to distinguish what is genuinely my jurisdiction and what isnt, now the app itself would live on azure and in this scenario my job is to make sure who has access to the infra itself and who operates it on what level and the granularity that follows that, not the app itself.
+
 # Incident response

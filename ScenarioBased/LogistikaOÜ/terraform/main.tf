@@ -197,6 +197,7 @@ resource "azurerm_mysql_flexible_server" "FleetTrackerData" {
   delegated_subnet_id = azurerm_subnet.mysql-server.id
   private_dns_zone_id = azurerm_private_dns_zone.MySQL.id
   sku_name = "B_Standard_B1ms"
+  depends_on = [ azurerm_private_dns_zone_virtual_network_link.MySQL-link ]
 }
 
 resource "azurerm_private_endpoint" "AzFiles" {
@@ -215,4 +216,38 @@ resource "azurerm_private_endpoint" "AzFiles" {
     name = "fileshare-dns-zone-group"
     private_dns_zone_ids = [azurerm_private_dns_zone.AzureFiles.id]
   }
+}
+
+resource "azurerm_log_analytics_workspace" "FleetLogs" {
+  name = "fleetapplogs"
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  sku = "PerGB2018"
+  retention_in_days = 30
+}
+
+resource "azurerm_application_insights" "fleetinsights" {
+  name = "fleet-app-insights"
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  workspace_id = azurerm_log_analytics_workspace.FleetLogs.id
+  application_type = "other"
+}
+
+resource "azurerm_service_plan" "FleetAppPlan" {
+  name = "fleetrackerplan"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  location = azurerm_resource_group.LogistikaOU.location
+  os_type = "Linux"
+  sku_name = "B2"
+}
+
+resource "azurerm_linux_web_app" "FleetTrackerApp" {
+  name = "logistikaou-fleettracker"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  location = azurerm_service_plan.FleetAppPlan.location
+  service_plan_id = azurerm_service_plan.FleetAppPlan.id
+  virtual_network_subnet_id = azurerm_subnet.appservice.id
+
+  site_config {}
 }
