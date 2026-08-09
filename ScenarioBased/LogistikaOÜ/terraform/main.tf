@@ -26,9 +26,15 @@ provider "azurerm" {
     resource_group {
       prevent_deletion_if_contains_resources = false 
     }
+    key_vault {
+      purge_soft_delete_on_destroy = true
+      recover_soft_deleted_key_vaults = true
+    }
   }
   subscription_id = var.subscription_id
 }
+
+data "azurerm_client_config" "current" {}
 
 resource "random_string" "random" {
   length = 5
@@ -168,6 +174,19 @@ resource "azurerm_private_dns_zone_virtual_network_link" "AzFiles" {
   registration_enabled = false
 }
 
+resource "azurerm_private_dns_zone" "KeyVault" {
+  name = "privatelink.vaultcore.azure.net"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "KvLink" {
+  name = "Keyvault"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  private_dns_zone_name = azurerm_private_dns_zone.KeyVault.name
+  virtual_network_id = azurerm_virtual_network.main.id
+  registration_enabled = false
+}
+
 resource "azurerm_storage_account" "LogistikaST" {
   name = "${var.storage_prefix}${random_string.random.result}"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
@@ -218,6 +237,25 @@ resource "azurerm_private_endpoint" "AzFiles" {
   }
 }
 
+resource "azurerm_private_endpoint" "KeyVault" {
+  name = "keyvault-endpoint"
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  subnet_id = azurerm_subnet.private-endpoints.id
+  depends_on = [ azurerm_private_dns_zone_virtual_network_link.KvLink ]
+
+  private_service_connection {
+    name = "keyvault-privateserviceconnection"
+    private_connection_resource_id = azurerm_key_vault.kv.id
+    subresource_names = ["vault"]
+    is_manual_connection = false
+  }
+  private_dns_zone_group {
+    name = "keyvault-dns-zone-group"
+    private_dns_zone_ids = [azurerm_private_dns_zone.KeyVault.id]
+  }
+}
+
 resource "azurerm_log_analytics_workspace" "FleetLogs" {
   name = "fleetapplogs"
   location = azurerm_resource_group.LogistikaOU.location
@@ -251,7 +289,7 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
 
   identity {
     type = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.acr.id]
+    identity_ids = [azurerm_user_assigned_identity.acr.id, azurerm_user_assigned_identity.keyvault.id]
   }
 
   site_config {
@@ -277,4 +315,43 @@ resource "azurerm_role_assignment" "Acr" {
   scope = azurerm_container_registry.acr.id
   role_definition_name = "AcrPull"
   principal_id = azurerm_user_assigned_identity.acr.principal_id
+}
+
+resource "azurerm_role_assignment" "KvSecrUser" { 
+  scope = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id = azurerm_user_assigned_identity.keyvault.principal_id
+}
+
+resource "azurerm_role_assignment" "KvSecrOfficer" {
+  scope = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_key_vault" "kv" {
+  name = "logOUkeyVault${random_string.random.result}"
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  rbac_authorization_enabled = true
+  enabled_for_disk_encryption = false
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days = 7
+  purge_protection_enabled = true
+  public_network_access_enabled = false
+
+  sku_name = "standard"
+}
+
+resource "azurerm_key_vault_secret" "DbCreds" {
+  name = "mysql-admin-pw"
+  value = var.mysql_admin_password
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [ azurerm_role_assignment.KvSecrOfficer ]
+}
+
+resource "azurerm_user_assigned_identity" "keyvault" {
+  location = azurerm_resource_group.LogistikaOU.location
+  name = "KVuser"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
 }
