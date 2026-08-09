@@ -249,5 +249,32 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
   service_plan_id = azurerm_service_plan.FleetAppPlan.id
   virtual_network_subnet_id = azurerm_subnet.appservice.id
 
-  site_config {}
+  identity {
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.acr.id]
+  }
+
+  site_config {
+    container_registry_use_managed_identity = true
+  }
+}
+
+resource "azurerm_user_assigned_identity" "acr" {
+  location = azurerm_resource_group.LogistikaOU.location
+  name = "acrpull"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
+resource "azurerm_container_registry" "acr" {
+  name = "contReg${random_string.random.result}"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  location = azurerm_resource_group.LogistikaOU.location
+  sku = "Basic"
+  admin_enabled = false
+}
+
+resource "azurerm_role_assignment" "Acr" { 
+  scope = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id = azurerm_user_assigned_identity.acr.principal_id
 }

@@ -422,4 +422,38 @@ Briefly considered using `auth_settings_v2` for the linux web app that would ran
 
 I think its important to distinguish what is genuinely my jurisdiction and what isnt, now the app itself would live on azure and in this scenario my job is to make sure who has access to the infra itself and who operates it on what level and the granularity that follows that, not the app itself.
 
+Added ACR and set the `admin_enabled` to false explicitly for the reason to avoid manual management of the registry and use managed identity instead which would authenticate itself against ACR independently and make pull requests by assigning it a role with `AcrPull`. If i were to set it to true instead it would have given me static username/pw which would then mean possible credentials leak > secrets rotation and just overall more manual labor.
+
+Public network access set to `true` for ACR, unlike with MySql. For CI/CD through github actions i needed the public access for it, without it github wouldnt be able to reach the Acr at all in order to push new images which would break the pipeline itself which is why i enforced security through identity based access instead (admin_enabled = false, MI + AcrPull) instead of network isolation.
+
+With Acr there was the "unique name" constraint again, so used `random_string` here again to avoid naming conflicts.
+
+Initially used `SystemAssigned` managed identity and then created the AcrPull role assignment for it, but after running plan on it i was met with `Missing req arguement` and it was pointing directly at the `principal_id` even though i had the arguement present.
+
+That was confusing at first because the syntax was correct, ran terraform validate which came back clean so the syntax bug was ruled out entirely.
+
+Re ran plan again and looked through ouputs and thats when i saw that app services `identity` block being added for the first time meant that the identity didnt exist anywhere including state.
+
+The problem was that `identity[0]` required indexing into the list, however since the identity was being created in the same apply, terraform couldnt confirm during planning whether the list would have any elements at all yet.
+
+At first i used `depends_on = [azurerm_linux_web_app.FleeTrackerApp]` on the role assignment. I assumed it was an ordering problem, ran plan again and still the same error.
+
+So it wasnt dependency ordering issue...
+
+Commented out the role assignment entirely, ran apply once. Then i uncommented the role assignment and ran apply again and this time `identity[0].principal_id` resolved fine because the identity now existed in the state from the first apply.
+
+Root cause found and it was the fact that identity needed to already exist in state before its principal Id could be referenced.
+
+But this meant that everytime i would run terraform destroy and apply again i would have to repeat the same manual process.
+
+For the permanent fix i switched out SystemAssigned to UserAssigned for managed identity. Added user assigned resource which would exist independently from the App service in comparison to system assigned.
+
+App service now references the identity via `identity_ids = []` instead of generating its own identity and role assignment references `azurerm_user_assigned_identity.acr.principal_id` directly. 
+
+Normal, single pass resolvable attribute on independent resource which eliminated indexing problem permanently.
+
+Ran plan again, clean and expected diff (app service id type change, role assignment replacement due to diff principal id, new id resource creation)
+
+Applied successfully, verified in the portal and made sure user assigned id had AcrPull role as well.
+
 # Incident response
