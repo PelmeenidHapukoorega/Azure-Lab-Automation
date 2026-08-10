@@ -286,6 +286,7 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
   location = azurerm_service_plan.FleetAppPlan.location
   service_plan_id = azurerm_service_plan.FleetAppPlan.id
   virtual_network_subnet_id = azurerm_subnet.appservice.id
+  key_vault_reference_identity_id = azurerm_user_assigned_identity.keyvault.id
 
   identity {
     type = "UserAssigned"
@@ -294,6 +295,10 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
 
   site_config {
     container_registry_use_managed_identity = true
+  }
+
+  app_settings = {
+    MySQL_Password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.DbCreds.versionless_id})"
   }
 }
 
@@ -338,9 +343,15 @@ resource "azurerm_key_vault" "kv" {
   tenant_id = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days = 7
   purge_protection_enabled = true
-  public_network_access_enabled = false
-
+  public_network_access_enabled = true
+  
   sku_name = "standard"
+
+  network_acls {
+    default_action = "Deny"
+    bypass = "AzureServices"
+    ip_rules = var.deployer_ip
+  }
 }
 
 resource "azurerm_key_vault_secret" "DbCreds" {

@@ -56,3 +56,9 @@ variable "mysql_subnet_prefix" {
   type = string
   default = "10.1.0.48/28"
 }
+
+variable "deployer_ip" {
+  description = "Public IP allowed to manage KV during deployment"
+  type = list(string)
+  sensitive = true
+}

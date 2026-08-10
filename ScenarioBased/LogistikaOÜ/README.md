@@ -456,4 +456,24 @@ Ran plan again, clean and expected diff (app service id type change, role assign
 
 Applied successfully, verified in the portal and made sure user assigned id had AcrPull role as well.
 
+Added `key_vault_reference_identity_id` to the app service with the wrong reference at first (`KvSecrOfficer`) before i realised that i needed to reference `azurerm_user_assigned_identity.keyvault.id` since it represents the identity itself that would read the secrets during runtime.
+
+Moved on to `app_settings` to add MySQL password URI and used `versionless_id` instead of `version` since version pinned URI would break every time secret would be rotated whereas versionless_id doesnt care and gives the latest version each time.
+
+Ran plan and was met with a status code error 403 where i couldnt write secret to the keyvault even though i had KV secrets officer permission set, however the problem was that even tho i had the role assignment the writing still failed because i was working from my workstation and not operating in the Vnet itself where the KV lived, i.e 2 different environments.
+
+First i tried to fix the issue by allowlisting IPv4 and created the variable for it, ran it again and still same error. 
+
+Then i briefly thought about allowlisting IPv6 too until i cross checked against the docs and saw that Key vaults `ip_rules` only accepts IPv4 so i ruled that option out.
+
+Ran it again and still same error persisted, i had allowlisted IPv4 address, created the variable and honestly was stumped because it should have worked.
+
+After looking through code as well as in the portal i realised my mistake which in hindsight was very obvious. 
+
+When i wrote `network_acls` to bypass azure services with my own IP it should have worked right? Well not really if the public network access itself is disabled at the resource level...
+
+My mistake was assuming that KV dealt in absolutes, either public network access or no access. I thought that by just adding `network_acls` block with my listed IP would work automatically, but in reality you need to set public network access to `true` at the resource level so it woul actually take effect and then be able to restrict it to set IP.
+
+After enabling public network access at KVs resource level, the plan and apply went throught, verified that MySQL password was visible in the apps app settings itself to confirm full chain resolved end to end. 
+
 # Incident response
