@@ -476,4 +476,36 @@ My mistake was assuming that KV dealt in absolutes, either public network access
 
 After enabling public network access at KVs resource level, the plan and apply went throught, verified that MySQL password was visible in the apps app settings itself to confirm full chain resolved end to end. 
 
+Moved onto RBAC to set up necessary role assignment for current IT person as well as thinking on the new guy coming in. 
+
+Started to add role assignment with `contributor` role but before writing it i started thinking about that it needed an identity for it to grant the role to and since there was no real person in this fantasy case study then what would the identity actually be?
+
+Then i thought about if TF should actually create the Entra ID user account itself via `azuread` provider or should the creation live outside the project itself.
+
+The thing i settled on is the following: If TF creates the user then TF also owns the user in its state which meant that everytime i would run `terraform destroy` (which i do constantly to control costs) it would delete the Entra ID account along with infra. 
+
+In other words its a risk.
+
+so decision i landed on was: User provisioning is a seperated identity management process and outside the projects scope. TF only builds the role assignment and i added a placeholder variable for where the real object ID would go once the real person actually existed. 
+
+TLDR: New IT person would either provision their own account (or having it provisioned during onboarding) since that would be part of their future job.
+
+My intention is to add a short operational manual for this infra later on anyway where i will clarify this specifically.
+
+Landed on `contributor` role specifically over `owner` because i took in the consideration that new IT person would have basic AZ knowledge and its not mentioned how well versed is the current IT person in azure.
+
+Contributor allows for managing, deleting, modofying and adding resources but doesnt have the ability to manage access or IAM.
+
+Which also added a problem: They could still delete the resources.
+
+To solve that i decided to apply `CanNotDelete` lock at the RG level, which means that all resources under the RG could not be deleted.
+
+Noticed that while app insights existed it wasnt wired to app itself to actually send the logs.
+
+Added `APPLICATIONINSIGHTS_CONNECTION_STRING` and app insights agent extension to actually connect it.
+
+You may or may have not noticed that appinsights connection string is all upper while mysql pw wasnt, the main reason for it is that mysql PW is that app setting key can be invented while appinsights connection string is something Azure actually looks for.
+
+Fixed race condition for storage PE as well by adding `depends_on` to it as well since i ran into the same issue again.
+
 # Incident response

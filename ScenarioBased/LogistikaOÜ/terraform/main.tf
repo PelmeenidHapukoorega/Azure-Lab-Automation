@@ -224,6 +224,7 @@ resource "azurerm_private_endpoint" "AzFiles" {
   location = azurerm_resource_group.LogistikaOU.location
   resource_group_name = azurerm_resource_group.LogistikaOU.name
   subnet_id = azurerm_subnet.private-endpoints.id
+  depends_on = [ azurerm_private_dns_zone_virtual_network_link.AzFiles ]
 
   private_service_connection {
     name = "fileshare-privateserviceconnection"
@@ -299,6 +300,8 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
 
   app_settings = {
     MySQL_Password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.DbCreds.versionless_id})"
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.fleetinsights.connection_string
+    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
   }
 }
 
@@ -334,6 +337,14 @@ resource "azurerm_role_assignment" "KvSecrOfficer" {
   principal_id = data.azurerm_client_config.current.object_id
 }
 
+/*
+resource "azurerm_role_assignment" "Contributor" {
+  scope = azurerm_resource_group.LogistikaOU.id
+  role_definition_name = "Contributor"
+  principal_id = var.it_admin_object_id
+}
+*/
+
 resource "azurerm_key_vault" "kv" {
   name = "logOUkeyVault${random_string.random.result}"
   location = azurerm_resource_group.LogistikaOU.location
@@ -365,4 +376,11 @@ resource "azurerm_user_assigned_identity" "keyvault" {
   location = azurerm_resource_group.LogistikaOU.location
   name = "KVuser"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
+resource "azurerm_management_lock" "rg-level" {
+  name = "rg-level-cantdel"
+  scope = azurerm_resource_group.LogistikaOU.id
+  lock_level = "CanNotDelete"
+  notes = "Prevents accidental deletion of the RG and resources within it. Remove ONLY with deliberate intent, contact architect first"
 }

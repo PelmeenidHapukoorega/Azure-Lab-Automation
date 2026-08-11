@@ -62,3 +62,8 @@ variable "deployer_ip" {
   type = list(string)
   sensitive = true
 }
+
+variable "it_admin_object_id" {
+  description = "Entra ID object ID of the operational IT administrator (Contributor access). Provisioned outside TF project"
+  type = string
+}
