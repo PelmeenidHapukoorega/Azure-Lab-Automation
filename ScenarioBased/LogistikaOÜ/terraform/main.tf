@@ -377,10 +377,11 @@ resource "azurerm_user_assigned_identity" "keyvault" {
   name = "KVuser"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
 }
-
+/*
 resource "azurerm_management_lock" "rg-level" {
   name = "rg-level-cantdel"
   scope = azurerm_resource_group.LogistikaOU.id
   lock_level = "CanNotDelete"
   notes = "Prevents accidental deletion of the RG and resources within it. Remove ONLY with deliberate intent, contact architect first"
 }
+*/

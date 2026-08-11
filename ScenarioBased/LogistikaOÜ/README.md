@@ -508,4 +508,8 @@ You may or may have not noticed that appinsights connection string is all upper 
 
 Fixed race condition for storage PE as well by adding `depends_on` to it as well since i ran into the same issue again.
 
+Ran destroy before heading to sleep and was met with an error where resources couldnt be deleted because the lock existed on the RG which i didnt account for initially, apparently terraform is still being blocked from deleting the resource which has CantDelete lock on it regardless if its defined as a resource. 
+
+Current workaround for it is to comment it out and once the infra is completely ready then comment it back in to take effect. Still figuring out how it would work during CI/CD.
+
 # Incident response
