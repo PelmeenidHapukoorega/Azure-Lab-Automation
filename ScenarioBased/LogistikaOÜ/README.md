@@ -512,4 +512,86 @@ Ran destroy before heading to sleep and was met with an error where resources co
 
 Current workaround for it is to comment it out and once the infra is completely ready then comment it back in to take effect. Still figuring out how it would work during CI/CD.
 
+Moved onto assigning policy according to constraints mentioned. Decided to not build a dedicated policy for encryption at rest since Azure has it set by default, documented it in detail under Recommendations.
+
+For MySql server i assumed i would just need to add diagnostic setting and then point `MySqlAuditLogs` at the workspace would have been enough, however i found out that it wouldnt generate audit log data at all by default.
+
+So i needed to turn on `audit_log_enabled` itself on the server level first through and a seperate `audit_log_events` to specify which event types it would capture using `azurerm_mysql_flexible_server_configuration` parameter.
+
+Added `DML` seperately for the audit log events explicitly due to GDPR reqs since DML would actually show in depth who did what on what row, who queried etc.
+
+As a sidenote i will mention that this could add to costs which would go above the 5GB free tier mentioned earlier.
+
+# Recommendations and scoped out improvements
+
+Items identified as valuable during the build but deliberately not implemented either because:
+
+* Falling outside infrastructure layer jurisdiction.
+* Cost/complexity tradeoff wasnt justified by the case studys stated reqs.
+
+Flagged here as recommendations for the client.
+
+1. Deployment slots
+
+Staging slot for the App service would allow testing updates before swap to prod with near 0 downtime. Rollback via re swap if something breaks.
+
+Directly supports want 8 (pipeline for future updates without manual server access) as well as general operational safety.
+
+**Reason for opting out**
+
+Wasnt explicity req and would add cost on the B2 plan tier, recommended as a next step once CI/CD pipeline would be in active use.
+
+2. App level user authentication
+
+App service supports built in authent (easy auth/ `auth_settings_v2`) that could front the app with login flows.
+
+**Reason for opting out**
+
+How drivers/employees authenticate into the app itself is an application layer concern for whoever builds/maintains the app itself.
+
+This projects access control scope is limited to who can manage Azure resources not who can use the app running on them.
+
+I.e not an infrastructure decision.
+
+3. Folder level file access control (180 employees)
+
+Want 4: (Only right people can access right things) is satisfied at the infrastructure level through RBAC: role assignments, disabled public access and PEs ensure only authorized identities can reach ST account/file share at all.
+
+**Reason for opting out**
+
+Per employee, per folder isolation within the share is a seperate and honestly much much deeper req. 
+
+It would require Az files native kerberos/ntfs style permissions which requires ST account to be domain joined via either on prem AD DS or Ms entra domain services. 
+
+Given the added cost and ongoing lifecycle management this would introduce for a single IT person with basic AZ skills i flagged this as a follow up recommendation.
+
+4. Access lifecycle 
+
+Case study notes that the current IT person is leaving in 2 months and the risk doesnt disappear just because infra moves to Azure. 
+
+If the new person is the only identity with meaningful access the company would risk lockout if that person is unavailable or leaves unexpectedly. 
+
+**Reason for opting out**
+
+RBAC design in this project accounts for this by keeping day 2 day operaton on `Contributor` instead of `Owner` with access management capability held by someones outside the single point of failure i.e in this case: Me.
+
+Recommended as ongoing practice instead, not a 1 time fix
+
+5. OnPrem AD/ Entra connect hybrid identity
+
+Case study mentioned an existing WIN server 2016 DC implying onprem AD for employee logins.
+
+**Reason for opting out**
+
+Since infra is migrating fully to Azure with no onprem resources remaining, hybrid identity sync for employee SSO wasnt built as part of this infra layer, however would be the natural next step if the client wanted a unified login across AZ and any remaining onprem systems.
+
+6. Encryption at rest
+
+Not enforced via AZ policy since all resources built in this project have encryption at rest enabled by default on platform level itself with no configuration path to disable it.
+
+Policy auditing here would be reduntant because there is no actual misconfiguration to detect. 
+
+Documented here as compliance evidence instead: Encryption at rest is guaranteed by Azures platform defaults for every data holding resource in this project.
+
+
 # Incident response

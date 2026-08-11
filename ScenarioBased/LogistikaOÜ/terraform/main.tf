@@ -378,10 +378,73 @@ resource "azurerm_user_assigned_identity" "keyvault" {
   resource_group_name = azurerm_resource_group.LogistikaOU.name
 }
 /*
-resource "azurerm_management_lock" "rg-level" {
+resource "azurerm_management_lock" "rg-level" { /// Commented out for active development, lock at RG level blocks TF destroy since it tracks locks dependency on the RG.
   name = "rg-level-cantdel"
   scope = azurerm_resource_group.LogistikaOU.id
   lock_level = "CanNotDelete"
   notes = "Prevents accidental deletion of the RG and resources within it. Remove ONLY with deliberate intent, contact architect first"
 }
-*/
+*/ 
+
+data "azurerm_policy_definition" "allowed_locations" {
+  display_name = "Allowed locations"
+}
+
+resource "azurerm_resource_group_policy_assignment" "allowed_locations" {
+  name = "allowed_locations"
+  resource_group_id = azurerm_resource_group.LogistikaOU.id
+  policy_definition_id = data.azurerm_policy_definition.allowed_locations.id
+  parameters = jsonencode({
+    listOfAllowedLocations = { value= ["westeurope"]}
+  })
+}
+
+resource "azurerm_monitor_diagnostic_setting" "kv_audit" {
+  name = "kv-audit-logs"
+  target_resource_id = azurerm_key_vault.kv.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.FleetLogs.id
+
+  enabled_log {
+    category = "AuditEvent"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "storage_audit" {
+  name = "st-audit_logs"
+  target_resource_id = "${azurerm_storage_account.LogistikaST.id}/fileServices/default"
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.FleetLogs.id
+
+  enabled_log {
+    category = "StorageRead"
+  }
+  enabled_log {
+    category = "StorageWrite"
+  }
+  enabled_log {
+    category = "StorageDelete"
+  }
+}
+
+resource "azurerm_mysql_flexible_server_configuration" "audit_log_enabled" {
+  name = "audit_log_enabled"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  server_name = azurerm_mysql_flexible_server.FleetTrackerData.name
+  value = "ON"
+}
+
+resource "azurerm_mysql_flexible_server_configuration" "audit_log_events" {
+  name = "audit_log_events"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  server_name = azurerm_mysql_flexible_server.FleetTrackerData.name
+  value = "CONNECTION,ADMIN,DCL,DDL,DML"
+}
+
+resource "azurerm_monitor_diagnostic_setting" "mysql_audit" {
+  name = "mysql-audit-logs"
+  target_resource_id = azurerm_mysql_flexible_server.FleetTrackerData.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.FleetLogs.id
+
+  enabled_log {
+    category = "MySqlAuditLogs"
+  }
+}
