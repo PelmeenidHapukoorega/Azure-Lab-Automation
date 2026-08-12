@@ -448,3 +448,33 @@ resource "azurerm_monitor_diagnostic_setting" "mysql_audit" {
     category = "MySqlAuditLogs"
   }
 }
+
+resource "azurerm_consumption_budget_resource_group" "rg-level-consumption" {
+  name = "rg-cost-month"
+  resource_group_id = azurerm_resource_group.LogistikaOU.id
+
+  amount = 200
+  time_grain = "Monthly"
+
+  time_period {
+    start_date = formatdate("2026-08-01'T'hh:mm:ssZ", timestamp())
+  }
+
+  notification {
+    enabled = true
+    threshold = 80.0
+    operator = "GreaterThan"
+    contact_roles = [ "Owner" ]
+  }
+
+  notification {
+    enabled = true
+    threshold = 100.0
+    operator = "GreaterThan"
+    contact_roles = [ "Owner" ]
+  }
+
+  lifecycle {
+    ignore_changes = [ time_period ]
+  }
+}

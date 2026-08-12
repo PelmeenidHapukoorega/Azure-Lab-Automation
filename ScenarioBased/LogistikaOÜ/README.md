@@ -522,6 +522,17 @@ Added `DML` seperately for the audit log events explicitly due to GDPR reqs sinc
 
 As a sidenote i will mention that this could add to costs which would go above the 5GB free tier mentioned earlier.
 
+Started configuring metric alert for the app services data out at 80Gb until reading docs i realised that `azurerm_monitor_metric_alert` on it couldnt natively sum a full months worth of data in evaluation window, max evaluation fram was for 2 days.
+
+Pivoted to using `azurerm_monitor_scheduled_query_rules_alert_v2` which is KQL based and added new diagnostic settings for `AllMetrics`. 
+
+The idea was to query log analytics directly but that required metrics from app service to be routed into the workspace first and then i discovered that max `window_duration` size was 2 days, meaning that even the query based approach here couldnt achieve the true monthly sum i was chasing for.
+
+Abandoned both approaches and removed them from code and pivoted to using `consumption_budget` for RG instead which would handle monthly windows correctly.
+
+Set the budget for 200 € in accordance to overall estimated cost of the entire build in running state with 2 notification thresholds (80% warning, 100% limit) using `formatdate` to satisfy "must start on the 1st of the month" requirement with `contact_roles = ["Owner] since there was no real IT persons email yet.
+
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:
@@ -592,6 +603,5 @@ Not enforced via AZ policy since all resources built in this project have encryp
 Policy auditing here would be reduntant because there is no actual misconfiguration to detect. 
 
 Documented here as compliance evidence instead: Encryption at rest is guaranteed by Azures platform defaults for every data holding resource in this project.
-
 
 # Incident response
