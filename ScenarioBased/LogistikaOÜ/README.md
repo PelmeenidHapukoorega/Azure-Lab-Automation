@@ -530,8 +530,33 @@ The idea was to query log analytics directly but that required metrics from app 
 
 Abandoned both approaches and removed them from code and pivoted to using `consumption_budget` for RG instead which would handle monthly windows correctly.
 
-Set the budget for 200 € in accordance to overall estimated cost of the entire build in running state with 2 notification thresholds (80% warning, 100% limit) using `formatdate` to satisfy "must start on the 1st of the month" requirement with `contact_roles = ["Owner] since there was no real IT persons email yet.
+Set the budget for 200 € in accordance to overall estimated cost of the entire build in running state with 2 notification thresholds (80% warning, 100% limit) using `formatdate` to satisfy "must start on the 1st of the month" requirement with `contact_roles = ["Owner"]` since there was no real IT persons email yet.
 
+With the budget alert out of the way i then moved onto other 3 remaining metri alerts from the OG cost table list: Response time, MySql cpu and storage capacity.
+
+Straightforward `azurerm_monitor_metric_alert` resources withoute monthly window problem since now each one checks short rolling windows instead of cumulatitive sum.
+
+Used avg response time metric and scoped it to app service, set the threshold at 5 seconds (explained in decision making) with a 5 min window and 1 min freq so it would check every 1 min and then evaluate avg over 5 min window.
+
+Moved on to MySQL cpu alert and accidentally used lowercase `Average` for `aggregation =` arguement which made the plan fail yet again, fixed the typo, worked.
+
+Ran plan/apply to verify so far done alerts and was met with key vault lockout issue during the apply. 
+
+I had just restarted my route (i have terrible network, like actually bad) and the thing with routers is that by default they use dynamic IP and static IP costs money if you wanna get one from the provider.
+
+This meant that eveytime my router was restarted i had to update the IP in tfvars every time.
+
+So after updating tfvars with the "new" IP, i ran apply again and it still failed, verified the IP was correct and ran it again, still failed.
+
+Figured that maybe the reason was that since i added a new IP then KVs firewall itself still had the old IP allowlisted.
+
+Since i was blocked with both apply/destroy i needed to update the key vault resource itself so it would update `network_acls` where i had my deploy IP variable, without needing to read the secret that blocked everything else.
+
+Ran `terraform apply -target=azurerm_key_vault.kv` which succeeded and added my "new" IP to allow list.
+
+Ran apply and this time it went through, then verified the alerts. 
+
+Btw, did you know that Azure monitor alert rules are actually independent resources? Neither did i.
 
 # Recommendations and scoped out improvements
 

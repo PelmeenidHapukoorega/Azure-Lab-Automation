@@ -478,3 +478,58 @@ resource "azurerm_consumption_budget_resource_group" "rg-level-consumption" {
     ignore_changes = [ time_period ]
   }
 }
+
+resource "azurerm_monitor_metric_alert" "response_time_alert" {
+  name = "avg-response-time-alert"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  scopes = [ azurerm_linux_web_app.FleetTrackerApp.id ]
+  description = "Fires if AVG response time exceeds 5 sec over a 5 min windows"
+
+  criteria {
+    metric_namespace = "Microsoft.Web/sites"
+    metric_name = "AverageResponseTime"
+    aggregation = "Average"
+    operator = "GreaterThan"
+    threshold = 5
+  }
+
+  window_size = "PT5M"
+  frequency = "PT1M"
+}
+
+resource "azurerm_monitor_metric_alert" "mysql_cpu_alert" {
+  name = "mysql-cpu-alert"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  scopes = [ azurerm_mysql_flexible_server.FleetTrackerData.id ]
+  description = "Fires when avg CPU exceeds 80% over 15 mins"
+  severity = 2
+
+  criteria {
+    metric_namespace = "Microsoft.DBforMySQL/flexibleServers"
+    metric_name = "cpu_percent"
+    aggregation = "Average"
+    operator = "GreaterThan"
+    threshold = 80
+  }
+
+  window_size = "PT15M"
+  frequency = "PT5M"
+}
+
+resource "azurerm_monitor_metric_alert" "storage_capacity_alert" {
+  name = "storage-capacity-alert"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  scopes = [ azurerm_storage_account.LogistikaST.id ]
+  description = "Fires when storage used capacity exceeds 800Gb, warning before 1Tb"
+  severity = 2
+
+  criteria {
+    metric_namespace = "Microsoft.Storage/storageAccounts"
+    metric_name = "UsedCapacity"
+    aggregation = "Average"
+    operator = "GreaterThan"
+    threshold = 858993459200
+  }
+  window_size = "PT1H"
+  frequency = "PT15M"
+}
