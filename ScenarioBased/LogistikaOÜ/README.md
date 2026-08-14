@@ -558,6 +558,23 @@ Ran apply and this time it went through, then verified the alerts.
 
 Btw, did you know that Azure monitor alert rules are actually independent resources? Neither did i.
 
+Moved onto az files backup vault, went with `UTC` instead rather than guessing specific identifier for Estonia.
+
+Also had `retention_weekly` and `retention_monthly` referencin multiple different weekdays initially, which in hindsight didnt really map cleanly with frameworks "keep 1 backup per week/month" logic. 
+
+Simplifed both to just sunday matching the example in the docs and added `weeks = ["Last]` to `retention_monthly` since it turns out thats required with `weekdays` and not optional on its own.
+
+Then added `azurerm_backup_protected_file_share` to protect the file share (clue is in the name) and reference ST account directly.
+
+ST account needed to be registered with the vault first however through a seperate resource `azurerm_backup_container_storage_account` before the share itself could be protected.
+
+Docs recommended adding `depends_on` here since this is apparently another case where the dependency isnt reliably inferred on its own.
+
+Had a couple of small syntax slips by missing `id` in the reference and a typo.
+
+Verified in the portal, and confirmed taht protected share was showing with `employeedata` actively being protected under retention policy.
+
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:

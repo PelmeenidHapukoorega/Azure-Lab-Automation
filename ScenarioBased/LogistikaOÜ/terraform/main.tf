@@ -533,3 +533,61 @@ resource "azurerm_monitor_metric_alert" "storage_capacity_alert" {
   window_size = "PT1H"
   frequency = "PT15M"
 }
+
+resource "azurerm_recovery_services_vault" "azfiles-backup" {
+  name = "AZfiles-backup"
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  sku = "Standard"
+}
+
+resource "azurerm_backup_policy_file_share" "backup-policy" {
+  name = "fileshare-vaultRec-policy"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  recovery_vault_name = azurerm_recovery_services_vault.azfiles-backup.name
+
+  timezone = "UTC"
+
+  backup {
+    frequency = "Daily"
+    time = "23:00"
+  }
+
+  retention_daily {
+    count = 30
+  }
+
+  retention_weekly {
+    count = 2
+    weekdays = ["Sunday"]
+  }
+
+  retention_monthly {
+    count = 3
+    weekdays = ["Sunday"]
+    weeks = [ "Last" ]
+  }
+
+  retention_yearly {
+    count = 1
+    weekdays = ["Sunday"]
+    weeks = ["Last"]
+    months = ["January"]
+  }
+}
+
+resource "azurerm_backup_container_storage_account" "protection-container" {
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  recovery_vault_name = azurerm_recovery_services_vault.azfiles-backup.name
+  storage_account_id = azurerm_storage_account.LogistikaST.id
+}
+
+resource "azurerm_backup_protected_file_share" "mainshare" {
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  recovery_vault_name = azurerm_recovery_services_vault.azfiles-backup.name
+  source_storage_account_id = azurerm_backup_container_storage_account.protection-container.storage_account_id
+  source_file_share_name = azurerm_storage_share.Employees.name
+  backup_policy_id = azurerm_backup_policy_file_share.backup-policy.id
+
+  depends_on = [ azurerm_backup_container_storage_account.protection-container ]
+}
