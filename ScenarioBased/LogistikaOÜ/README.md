@@ -574,6 +574,35 @@ Had a couple of small syntax slips by missing `id` in the reference and a typo.
 
 Verified in the portal, and confirmed taht protected share was showing with `employeedata` actively being protected under retention policy.
 
+Ran tf destroy after finishing with file share backup section and after a while noticed that the PE for fileshare was at "still destroying" for 20+ minutes...
+
+At first i thought that okay maybe RSV teardown is just taking that long and thats why its still going, checked the RG and RSV was already gone so that wasnt it.
+
+Then eventually it stopped and hit `ScopedLocked` error, this time it was scoped to the ST account itself, now i knew i didnt add any locks to it, and the RG lock resource was commented out for me. 
+
+Checked the portals lock blade, nothing there. Ran `az lock list` and scoped it to ST account, still nothing.
+
+Checked deny assignments via REST API directly and again nothing.
+
+This was starting to become really frustrating at this point since i had already spent a good 45 mins on it, but since i cant quit until i fix smt i kept pushing on.
+
+Checked role assignments for anything uncanny and yet again nothing. Every tool i had said no lock existed while Azures own delete API kept insisting that 1 did.
+
+I checked the docs for az backup and found the explanation for my issu. Az backup applies its protection lock at the file-share/backup-item level specifically and not the ST account itself. Basically by enabling the protection it doesnt show up through any of the normal channels you would usually look through.
+
+So first i stopped the backup protection with data deletion, luckily not production environment. In production i wouldnt do any of what i just did since production doesnt destroy protected resources as casually as i do here since i need to control my costs much more.
+
+However if it was production and i would genuinely need to decomission a resource i would first verify and export or migrate any data i would need to retain first, stop backup protection with explicit retention decision and wait for and verify the stop protection operation fully completes and only then move on to deletion.
+
+After waiting for it to take effect, the error then changed from `ScopeLocked` to `DeleteShareWhenSnapshotLeased` which meant that the snapshot of `employeedata` backup made was still leased which was the reason for blocking deletion.
+
+Tried `az storage share-rm delete --include "leased"` first which failed with invalid parameter. Looked up the valid values for `--inlcude (snapshots, leased-snapshots, none)` and corrected it to `leased-snapshots` which then worked.
+
+Ran tf destroy again and now it finished cleanly.
+
+Takeaway for this specifically: Enabling az backup on a resource has real and clearly not obvious consequences for destroy workflow. Implicit locks and leased snapshots wont surface through standard channels and can persist even after protection is stopped and needing manual CLI intervention to fully clear.
+
+One issue still remained for me, if i were to run apply and then destroy again there was a good chance i might hit the same error so in order to avoid it i added `depends_on` to employees share itself and referenced the main share so that it would tell terraform explicitly that protection has to be completely gone before even touching the share. Basically the same dependency logic as with apply but this time in reverse.
 
 # Recommendations and scoped out improvements
 

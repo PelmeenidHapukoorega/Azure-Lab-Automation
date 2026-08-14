@@ -204,6 +204,8 @@ resource "azurerm_storage_share" "Employees" {
   quota = 1024
   enabled_protocol = "SMB"
   access_tier = "Cool"
+
+  depends_on = [ azurerm_backup_protected_file_share.mainshare ]
 }
 
 resource "azurerm_mysql_flexible_server" "FleetTrackerData" {
