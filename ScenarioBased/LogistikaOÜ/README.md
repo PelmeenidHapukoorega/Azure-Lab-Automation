@@ -604,6 +604,35 @@ Takeaway for this specifically: Enabling az backup on a resource has real and cl
 
 One issue still remained for me, if i were to run apply and then destroy again there was a good chance i might hit the same error so in order to avoid it i added `depends_on` to employees share itself and referenced the main share so that it would tell terraform explicitly that protection has to be completely gone before even touching the share. Basically the same dependency logic as with apply but this time in reverse.
 
+Ran plan and ran into cycle error which i feared. My main share already was referencing the employees share and now i had added main share depending on employees so A needed B and vice versa hence the error, still worth a try.
+
+I didnt want to manually run `az storage share-rm delete --include leased-snapshots` everytime during destroy workflow so instead i opted for writing a script for it to run before actually running destroy.
+
+My core issue was that the ST account changes each redeploy and backup item name is in hash. So hardcoding either 1 would straight break the next redeploy. I needed the script to dynamically look up the current ST account name, build the container name from it and seperately query for the item name. 
+
+Then added confirmation prompt because we are dealing with backup data and then the actual `az backup protection disable --delete-backup-data true` cmdlet.
+
+Ran apply to get the infra up and test the script, then ran destroy after it and was met with the same `ScopeLocked` error as before which was confusing because the same command worked when i ran it manually beforehand.
+
+I thought that maybe the lock itself needed some time to clear and the script was running the "disable then delete" steps too fast with no natural gap. So i added retry loop and retry the command if it failed after every 30 seconds and for 6 attempts.
+
+It failed every single attempt. Same error every time too. Considered that maybe the Backups backend might genuinely perhaps have any issues that night especially after getting `CloudInternalError` from Azure backup earlier. 
+
+Checked Azure status page directly to see if service was healthy and no outages were happening. Ruled out.
+
+Had to be tied to resource, checked again thoroughly and this time found a second different lock which was only visible via `az lock list` this time. Checked the name and saw `AzureBackupProtectionLock` sitting at the ST account level this time around. This hadnt happen before the same error came up so this was new.
+
+Added logic to the script to check for and remove standard locks at both RG and ST account level upfront before attempting anything else.
+
+Even after adding lock removal logic, script still failed but `az lock delete` now gave me a more useful error. Invalid resource ID prefixed with `F:/Git/Subscriptions` instead of starting `/subscriptions/`. 
+
+Turned out to be known git bash/MinGW quirk on windows. The shell basically "helpfully" mangled arguments that looked like Unix paths by prepending local file system path which then i assume it silently corrupted resource ID before the CLI even saw it.
+
+It would explain why manual command worked but script failed consistently.
+
+Fixed it by prefixing `az lock delete` calls with `MSYS_NO_PATHCONV=1`; ran the script fresh, worked first try and tf destroy completed cleanly.
+
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:
