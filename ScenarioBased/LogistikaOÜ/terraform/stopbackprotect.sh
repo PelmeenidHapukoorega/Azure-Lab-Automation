@@ -1,6 +1,6 @@
 #!/usr/bin/env bash 
 
-# Stops AZ backup protection on file share before running tf destroy
+# Removes all possible standard locks on RG and ST account and stops AZ backup protection on file share before running tf destroy
 
 RESOURCE_GROUP="Log-OU-rg"
 VAULT_NAME="AZfiles-backup"
