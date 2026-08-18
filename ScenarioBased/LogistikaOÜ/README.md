@@ -638,6 +638,8 @@ Decided to add it for better observability since its not exactly known how much 
 
 Set the window/frequency to match storages slow moving nature instead of reusing MySqls CPU alert one.
 
+Added scheduled KQL query alert for data ingestion on the workspace instead of using `daily_quota_gb` hardcap because data ingestion would be stopped if it reaches the threshold which in turn would mean data loss.
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:

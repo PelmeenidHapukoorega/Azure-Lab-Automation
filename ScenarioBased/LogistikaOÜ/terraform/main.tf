@@ -610,3 +610,34 @@ resource "azurerm_backup_protected_file_share" "mainshare" {
 
   depends_on = [ azurerm_backup_container_storage_account.protection-container ]
 }
+
+resource "azurerm_monitor_scheduled_query_rules_alert_v2" "log-analytics_ingestion" {
+  name = "log-analytics-ingestion-alert"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  location = azurerm_resource_group.LogistikaOU.location
+  scopes = [ azurerm_log_analytics_workspace.FleetLogs.id ]
+  description = "Fires when data ingestion reaches 4Gb"
+  severity = 2
+  evaluation_frequency = "P1D"
+  window_duration = "P1D"
+
+  criteria {
+    query = <<-EOT
+    Usage
+    | where TimeGenerated > ago(24h)
+    | where IsBillable == true
+    | summarize IngestedGB = sum(Quantity) / 1000
+    EOT
+
+    time_aggregation_method = "Maximum"
+    threshold = 4
+    operator = "GreaterThan"
+
+    metric_measure_column = "IngestedGB"
+
+    failing_periods {
+      minimum_failing_periods_to_trigger_alert = 1
+      number_of_evaluation_periods = 1
+    }
+  }
+}
