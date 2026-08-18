@@ -660,6 +660,18 @@ Ran terraform apply and noticed tags were all applied to RG but not child resour
 
 For that to happen i added `azurerm_resource_group_policy_remediation` which mirrored the same `for_each` pattern as the policy assignments (1 remediation per task) which after apply triggered retroactive tagging across all existing resources.
 
+Moved onto adding outputs. Left admin login and password out entirely, raw value would have duplicated it for no reason.
+
+Added 8 sections: networking, storage, mysql, KV, Appservice, ACR, monitoring, RG. Mostly names, IDs, endpoints as well as `mysql_secret_versionless_id` and `acr_login_server` for the CI/CD pipeline.
+
+Ran plan and hit real issue where 28 resources showed as to change and losing all their tags. Tags were applied via policys remediation task and i deliberately didnt add them in any resource blocks so TF saw them as drift and wanted to remove them. 
+
+Fixed it with `lifecycle { ignore_changes = [tags] }` on all 28 resource which was tedious to say the least and honestly lesson learned.
+
+Going forward i will implement tagging as early as possible to avoid this type of manual labor ever again.
+
+Ran the plan again, clean and applied successfully.
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:

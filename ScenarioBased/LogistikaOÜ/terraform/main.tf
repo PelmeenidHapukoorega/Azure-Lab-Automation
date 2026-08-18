@@ -61,6 +61,10 @@ resource "azurerm_virtual_network" "main" {
   address_space = [var.vnet_address_space]
   location = azurerm_resource_group.LogistikaOU.location
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_subnet" "appservice" {
@@ -109,12 +113,20 @@ resource "azurerm_network_security_group" "PE-nsg" {
   name = "${var.prefix}-nsg-pe"
   location = azurerm_resource_group.LogistikaOU.location
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_network_security_group" "SQL-nsg" {
   name = "${var.prefix}-nsg-sql"
   location = azurerm_resource_group.LogistikaOU.location
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_network_security_rule" "Inbound-MySQL" {
@@ -158,6 +170,10 @@ resource "azurerm_subnet_network_security_group_association" "sql-subn-nsg-assoc
 resource "azurerm_private_dns_zone" "MySQL" {
   name = "privatelink.mysql.database.azure.com"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "MySQL-link" {
@@ -166,11 +182,20 @@ resource "azurerm_private_dns_zone_virtual_network_link" "MySQL-link" {
   private_dns_zone_name = azurerm_private_dns_zone.MySQL.name
   virtual_network_id = azurerm_virtual_network.main.id
   registration_enabled = false
+
+  lifecycle {
+    ignore_changes = [ tags
+     ]
+  }
 }
 
 resource "azurerm_private_dns_zone" "AzureFiles" {
   name = "privatelink.file.core.windows.net"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "AzFiles" {
@@ -179,11 +204,19 @@ resource "azurerm_private_dns_zone_virtual_network_link" "AzFiles" {
   private_dns_zone_name = azurerm_private_dns_zone.AzureFiles.name
   virtual_network_id = azurerm_virtual_network.main.id
   registration_enabled = false
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_private_dns_zone" "KeyVault" {
   name = "privatelink.vaultcore.azure.net"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "KvLink" {
@@ -192,6 +225,10 @@ resource "azurerm_private_dns_zone_virtual_network_link" "KvLink" {
   private_dns_zone_name = azurerm_private_dns_zone.KeyVault.name
   virtual_network_id = azurerm_virtual_network.main.id
   registration_enabled = false
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_storage_account" "LogistikaST" {
@@ -203,6 +240,10 @@ resource "azurerm_storage_account" "LogistikaST" {
   account_replication_type = "ZRS"
   min_tls_version = "TLS1_2"
   public_network_access_enabled = false 
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_storage_share" "Employees" {
@@ -224,6 +265,10 @@ resource "azurerm_mysql_flexible_server" "FleetTrackerData" {
   private_dns_zone_id = azurerm_private_dns_zone.MySQL.id
   sku_name = "B_Standard_B1ms"
   depends_on = [ azurerm_private_dns_zone_virtual_network_link.MySQL-link ]
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_private_endpoint" "AzFiles" {
@@ -232,6 +277,10 @@ resource "azurerm_private_endpoint" "AzFiles" {
   resource_group_name = azurerm_resource_group.LogistikaOU.name
   subnet_id = azurerm_subnet.private-endpoints.id
   depends_on = [ azurerm_private_dns_zone_virtual_network_link.AzFiles ]
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 
   private_service_connection {
     name = "fileshare-privateserviceconnection"
@@ -252,6 +301,10 @@ resource "azurerm_private_endpoint" "KeyVault" {
   subnet_id = azurerm_subnet.private-endpoints.id
   depends_on = [ azurerm_private_dns_zone_virtual_network_link.KvLink ]
 
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
+
   private_service_connection {
     name = "keyvault-privateserviceconnection"
     private_connection_resource_id = azurerm_key_vault.kv.id
@@ -270,6 +323,10 @@ resource "azurerm_log_analytics_workspace" "FleetLogs" {
   resource_group_name = azurerm_resource_group.LogistikaOU.name
   sku = "PerGB2018"
   retention_in_days = 30
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_application_insights" "fleetinsights" {
@@ -278,6 +335,10 @@ resource "azurerm_application_insights" "fleetinsights" {
   resource_group_name = azurerm_resource_group.LogistikaOU.name
   workspace_id = azurerm_log_analytics_workspace.FleetLogs.id
   application_type = "other"
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_service_plan" "FleetAppPlan" {
@@ -286,6 +347,10 @@ resource "azurerm_service_plan" "FleetAppPlan" {
   location = azurerm_resource_group.LogistikaOU.location
   os_type = "Linux"
   sku_name = "B2"
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_linux_web_app" "FleetTrackerApp" {
@@ -299,6 +364,10 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
   identity {
     type = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.acr.id, azurerm_user_assigned_identity.keyvault.id]
+  }
+
+  lifecycle {
+    ignore_changes = [ tags ]
   }
 
   site_config {
@@ -316,6 +385,10 @@ resource "azurerm_user_assigned_identity" "acr" {
   location = azurerm_resource_group.LogistikaOU.location
   name = "acrpull"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_container_registry" "acr" {
@@ -324,6 +397,10 @@ resource "azurerm_container_registry" "acr" {
   location = azurerm_resource_group.LogistikaOU.location
   sku = "Basic"
   admin_enabled = false
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_role_assignment" "Acr" { 
@@ -371,6 +448,10 @@ resource "azurerm_key_vault" "kv" {
   
   sku_name = "standard"
 
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
+
   network_acls {
     default_action = "Deny"
     bypass = "AzureServices"
@@ -389,12 +470,20 @@ resource "azurerm_user_assigned_identity" "keyvault" {
   location = azurerm_resource_group.LogistikaOU.location
   name = "KVuser"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_user_assigned_identity" "tag_inherit" {
   location = azurerm_resource_group.LogistikaOU.location
   name = "tag-inherit-identity"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 /*
@@ -545,6 +634,10 @@ resource "azurerm_monitor_metric_alert" "response_time_alert" {
     threshold = 5
   }
 
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
+
   window_size = "PT5M"
   frequency = "PT1M"
 }
@@ -562,6 +655,10 @@ resource "azurerm_monitor_metric_alert" "mysql_cpu_alert" {
     aggregation = "Average"
     operator = "GreaterThan"
     threshold = 80
+  }
+
+  lifecycle {
+    ignore_changes = [ tags ]
   }
 
   window_size = "PT15M"
@@ -583,6 +680,10 @@ resource "azurerm_monitor_metric_alert" "mysql-storage-used-alert" {
     threshold = 80
   }
 
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
+
   window_size = "PT1H"
   frequency = "PT15M"
 }
@@ -601,6 +702,11 @@ resource "azurerm_monitor_metric_alert" "storage_capacity_alert" {
     operator = "GreaterThan"
     threshold = 858993459200
   }
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
+  
   window_size = "PT1H"
   frequency = "PT15M"
 }
@@ -610,6 +716,10 @@ resource "azurerm_recovery_services_vault" "azfiles-backup" {
   location = azurerm_resource_group.LogistikaOU.location
   resource_group_name = azurerm_resource_group.LogistikaOU.name
   sku = "Standard"
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 }
 
 resource "azurerm_backup_policy_file_share" "backup-policy" {
@@ -672,6 +782,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "log-analytics_ingesti
   severity = 2
   evaluation_frequency = "P1D"
   window_duration = "P1D"
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
 
   criteria {
     query = <<-EOT
