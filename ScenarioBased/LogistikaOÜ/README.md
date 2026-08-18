@@ -640,6 +640,26 @@ Set the window/frequency to match storages slow moving nature instead of reusing
 
 Added scheduled KQL query alert for data ingestion on the workspace instead of using `daily_quota_gb` hardcap because data ingestion would be stopped if it reaches the threshold which in turn would mean data loss.
 
+Moved onto tagging all the resources for better cost management and overview.
+
+MS CAF recommended set `CostCenter`, `Environment`, `Owner` and `Application` explicitly for foundational tagging. I could go in depth and tag according to resource type but at this scale it would add complexity instead of simplicity which i was after.
+
+`default_tags` doesnt exist for Azure, checked if terraform could auto apply tags across all resources (Like AWS or GCP). 
+
+Confirmed through hashicorps well architected framework that `azurerm` provider had no equivalent for it, recommended alternative was to use AZ policy with tag inheritance.
+
+Instead of manually tagging 50+ resources, some even where tags cant be applied to, i opted for using built in policy with `modify` effect that automatically copies tags from the RG to child resources within it.
+
+Used `for_each` to apply it once per tag name so 4 assignments from 1 block instead of writing 4 pretty much identical ones.
+
+However `modify` needed its own identity. First apply failed with `ResourceIdentityRequired`.
+
+Knew that the `SystemAssigned` bug would happen again if i were to go with that, so i added `UserAssigned` identity with `Tag Contributor` role across all 4 policy assignments and avoiding the 2 stage apply workaround. 
+
+Ran terraform apply and noticed tags were all applied to RG but not child resources. Nothing wrong with the policy itself, if i were to add new resources then new ones would inherit the same tags however not the ones that were already existing.
+
+For that to happen i added `azurerm_resource_group_policy_remediation` which mirrored the same `for_each` pattern as the policy assignments (1 remediation per task) which after apply triggered retroactive tagging across all existing resources.
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:

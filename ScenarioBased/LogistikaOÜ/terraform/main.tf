@@ -47,6 +47,13 @@ resource "random_string" "random" {
 resource "azurerm_resource_group" "LogistikaOU" {
   name = "${var.prefix}-rg"
   location = var.location
+
+  tags = {
+    CostCenter = "Infrastructure"
+    Environment = "LogistikaOU"
+    Owner = "Architect"
+    Application = "FleetTracker"
+  }
 }
 
 resource "azurerm_virtual_network" "main" {
@@ -337,6 +344,12 @@ resource "azurerm_role_assignment" "KvSecrOfficer" {
   principal_id = data.azurerm_client_config.current.object_id
 }
 
+resource "azurerm_role_assignment" "TagContributor" {
+  scope = azurerm_resource_group.LogistikaOU.id
+  role_definition_name = "Tag Contributor"
+  principal_id = azurerm_user_assigned_identity.tag_inherit.principal_id
+}
+
 /*
 resource "azurerm_role_assignment" "Contributor" {
   scope = azurerm_resource_group.LogistikaOU.id
@@ -377,6 +390,13 @@ resource "azurerm_user_assigned_identity" "keyvault" {
   name = "KVuser"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
 }
+
+resource "azurerm_user_assigned_identity" "tag_inherit" {
+  location = azurerm_resource_group.LogistikaOU.location
+  name = "tag-inherit-identity"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
 /*
 resource "azurerm_management_lock" "rg-level" { /// Commented out for active development, lock at RG level blocks TF destroy since it tracks locks dependency on the RG.
   name = "rg-level-cantdel"
@@ -388,6 +408,38 @@ resource "azurerm_management_lock" "rg-level" { /// Commented out for active dev
 
 data "azurerm_policy_definition" "allowed_locations" {
   display_name = "Allowed locations"
+}
+
+data "azurerm_policy_definition" "inherit_tag" {
+  display_name = "Inherit a tag from the resource group"
+}
+
+resource "azurerm_resource_group_policy_assignment" "inherit_tags" {
+  for_each = toset(["CostCenter", "Environment", "Owner", "Application"])
+
+  name = "inherit-${lower(each.value)}-tag"
+  location = azurerm_resource_group.LogistikaOU.location
+  resource_group_id = azurerm_resource_group.LogistikaOU.id
+  policy_definition_id = data.azurerm_policy_definition.inherit_tag.id
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [ azurerm_user_assigned_identity.tag_inherit.id]
+  }
+
+  parameters = jsonencode({
+    tagName = { value = each.value }
+  })
+
+  depends_on = [ azurerm_role_assignment.TagContributor ]
+}
+
+resource "azurerm_resource_group_policy_remediation" "inherit-tags-remediation" {
+  for_each = azurerm_resource_group_policy_assignment.inherit_tags
+
+  name = "remediate-${lower(each.key)}-tag"
+  resource_group_id = azurerm_resource_group.LogistikaOU.id
+  policy_assignment_id = each.value.id
 }
 
 resource "azurerm_resource_group_policy_assignment" "allowed_locations" {
