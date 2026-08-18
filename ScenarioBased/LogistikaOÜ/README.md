@@ -632,6 +632,11 @@ It would explain why manual command worked but script failed consistently.
 
 Fixed it by prefixing `az lock delete` calls with `MSYS_NO_PATHCONV=1`; ran the script fresh, worked first try and tf destroy completed cleanly.
 
+Earlier i contemplated of adding alert for storage used in the mysql but decided to not make a decision then and postpone it for later.
+
+Decided to add it for better observability since its not exactly known how much data would be ingested during the migration or in the aftermath, so i set up the alert when storage reaches 80% of total capacity out of 20Gb which was currently set.
+
+Set the window/frequency to match storages slow moving nature instead of reusing MySqls CPU alert one.
 
 # Recommendations and scoped out improvements
 

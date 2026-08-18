@@ -516,6 +516,25 @@ resource "azurerm_monitor_metric_alert" "mysql_cpu_alert" {
   frequency = "PT5M"
 }
 
+resource "azurerm_monitor_metric_alert" "mysql-storage-used-alert" {
+  name = "mysql-storage-alert"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  scopes = [ azurerm_mysql_flexible_server.FleetTrackerData.id ]
+  description = "Fires when storage reaches 80% of total capacity"
+  severity = 2
+
+  criteria {
+    metric_namespace = "Microsoft.DBforMySQL/flexibleServers"
+    metric_name = "storage_percent"
+    aggregation = "Average"
+    operator = "GreaterThan"
+    threshold = 80
+  }
+
+  window_size = "PT1H"
+  frequency = "PT15M"
+}
+
 resource "azurerm_monitor_metric_alert" "storage_capacity_alert" {
   name = "storage-capacity-alert"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
