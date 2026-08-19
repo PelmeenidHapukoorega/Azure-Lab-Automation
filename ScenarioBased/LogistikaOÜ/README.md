@@ -712,6 +712,30 @@ Fixed it by force lowercasing the acr name in the workflow before building the r
 
 Ran the pipeline again after all 3 fixes, completed clean end to end. Verified `fleettracker:latest` actually showing up in the registry.
 
+After verifying that ACR was set up and could push images to the infrastructure i moved on to building minimal test app to genuinely validate the infrastructure end to end. So mimicking real data flow through App service > MySQL > Key vault sourced credentials not just "resources exist and TF applied cleanly, lets check out".
+
+Before writing PHP i needed to work out what the app would actually need: Host, username, password and a database itself to connect to. 
+
+I already had username and pw which already existed as KV backed app settings from earlier. Host needed adding as a new app setting (`MySQL_Host` referencing servers FQDN) to stay consistent with the same pattern instead of hardcoding it into PHP.
+
+However the database itself didnt exist yet since flexible server provisions the server only where the database would exist and not with it.
+
+Added the resource to terraform under the flexible server.
+
+For charset i initially went with default `utf8/utf8_unicode_ci` but checked instead of assuming and confirmed that MySQL 8 (which the server runs on) defaults to `utf8mb4/utf8mb4_0900_ai_ci` which is the modern full unicode capable option.
+
+Switched to match the servers own default and verified after deployment in the portal that the newly created `fleettrackerdb` shows up alongside the system databases with matching charset/collation.
+
+Wrote the minimal PHP app which core purpose is to verify that data is being written to the database, reads back entries and shows data flow.
+
+Next created docker file to package the minimal PHP app i just made into an image.
+
+Added 3 lines: `FROM php:8-apache` for the base PHP/apache image, `RUN docker-php-ext-install mysqli` since the base image includes core PHP but not the `mysqli` extension my script actually uses (`mysqli_connect` and `mysqli_query`). `COPY index.php /var/www/html/` to place the app code into apaches web root where it would then get served.
+
+Then i updated workflow to switch out placeholder image to the minimal test app image instead and updated the path.
+
+After all that was done ran the pipeline
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:

@@ -35,8 +35,7 @@ jobs:
       - name: Log in to ACR
         run: az acr login --name ${{ steps.acr.outputs.acr_name }}
 
-      - name: Pull, tag and push placeholder image
+      - name: Build and push image
         run: |
-          docker pull php:8-apache 
-          docker tag php:8-apache ${{ steps.acr.outputs.acr_name }}.azurecr.io/fleettracker:latest
+          docker build -t ${{ steps.acr.outputs.acr_name }}.azurecr.io/fleettracker:latest ./ScenarioBased/LogistikaOÜ/testapp
           docker push ${{ steps.acr.outputs.acr_name }}.azurecr.io/fleettracker:latest

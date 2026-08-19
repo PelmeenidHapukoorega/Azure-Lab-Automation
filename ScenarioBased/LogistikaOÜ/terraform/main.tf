@@ -271,6 +271,14 @@ resource "azurerm_mysql_flexible_server" "FleetTrackerData" {
   }
 }
 
+resource "azurerm_mysql_flexible_database" "fleetdatabase" {
+  name = "fleettrackerdb"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+  server_name = azurerm_mysql_flexible_server.FleetTrackerData.name
+  charset = "utf8mb4"
+  collation = "utf8mb4_0900_ai_ci"
+}
+
 resource "azurerm_private_endpoint" "AzFiles" {
   name = "fileshare-endpoint"
   location = azurerm_resource_group.LogistikaOU.location
@@ -375,6 +383,8 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
   }
 
   app_settings = {
+    MySQL_Host = azurerm_mysql_flexible_server.FleetTrackerData.fqdn
+    MySQL_Username = var.mysql_admin_username
     MySQL_Password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.DbCreds.versionless_id})"
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.fleetinsights.connection_string
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
