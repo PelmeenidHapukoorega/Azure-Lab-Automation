@@ -520,14 +520,12 @@ resource "azurerm_user_assigned_identity" "tag_inherit" {
   }
 }
 
-/*
-resource "azurerm_management_lock" "rg-level" { /// Commented out for active development, lock at RG level blocks TF destroy since it tracks locks dependency on the RG.
+resource "azurerm_management_lock" "rg-level" {
   name = "rg-level-cantdel"
   scope = azurerm_resource_group.LogistikaOU.id
   lock_level = "CanNotDelete"
   notes = "Prevents accidental deletion of the RG and resources within it. Remove ONLY with deliberate intent, contact architect first"
 }
-*/ 
 
 data "azurerm_policy_definition" "allowed_locations" {
   display_name = "Allowed locations"
