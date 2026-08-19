@@ -1,0 +1,41 @@
+name: LogistikaOI CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ScenarioBased/LogistikaOÜ/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Get ACR name
+        id: acr
+        run: |
+          ACR_NAME=$(az acr list --resource-group Log-OU-rg --query "[0].name" -o tsv)
+          echo "acr_name=$ACR_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to ACR
+        run: az acr login --name ${{ steps.acr.outputs.acr_name }}
+
+      - name: Pull, tag and push placeholder image
+        run: |
+          docker pull php:8-apache 
+          docker tag php:8-apache ${{ steps.acr.outputs.acr_name }}.azurecr.io/fleettracker:latest
+          docker push ${{ steps.acr.outputs.acr_name }}.azurecr.io/fleettracker:latest

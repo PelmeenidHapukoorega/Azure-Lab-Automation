@@ -672,6 +672,30 @@ Going forward i will implement tagging as early as possible to avoid this type o
 
 Ran the plan again, clean and applied successfully.
 
+Started with CI/CD side of the project, checked current best practices for github actions to azure auth.
+
+OIDC federation is the current standard so no stored secrets and matched my identity first pattern ive used everywhere else in the project.
+
+Reused `azurerm_user_assigned_identity` pattern instead of learning app registration from 0.
+
+Hit provider deprecation on `azurerm_federated_identity_credential`, both `parent_id` and `resource_group_name` are deprecated but can still be used. 
+
+Still decided to lookup changes for both. `Parent_id` got renamed to just `user_assigned_identity_id` and `resource_group_name` got dropped entirely since identitys own ID already encodes it.
+
+Accidentally used "AcrPush" for role definition ID which was the name itself and not the actual GUID ID that i needed. Caught it by comparing against other role assignments in the project.
+
+Had `http://` instead of `https://` for githubs OIDC issuer URL, so checked it char by char to figure out what was wrong. Fixed it.
+
+Planned static `ACR_NAME` github secret first, but realised it would go stale every redeploy since it had random suffix on it. 
+
+Pivoted to dynamic querying the current ACR name through `az acr list` at runtime instead, same thing i did for the script.
+
+Moved onto actually writing the yml itself and ran into cluster of syntax mistakes on the first go.
+
+Permissions got nested inside `on` instead of being at the top level, backticks instead of quotes for the path filter and a stale `secrets.ACR_NAME` reference left in the final push step even after i added the dynamic lookup step.
+
+Fixed them all and moved onto testing the pipeline.
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:

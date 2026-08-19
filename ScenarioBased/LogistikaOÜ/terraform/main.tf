@@ -391,6 +391,12 @@ resource "azurerm_user_assigned_identity" "acr" {
   }
 }
 
+resource "azurerm_user_assigned_identity" "github_actions" {
+  location = azurerm_resource_group.LogistikaOU.location
+  name = "github-actions_cicd"
+  resource_group_name = azurerm_resource_group.LogistikaOU.name
+}
+
 resource "azurerm_container_registry" "acr" {
   name = "contReg${random_string.random.result}"
   resource_group_name = azurerm_resource_group.LogistikaOU.name
@@ -407,6 +413,12 @@ resource "azurerm_role_assignment" "Acr" {
   scope = azurerm_container_registry.acr.id
   role_definition_name = "AcrPull"
   principal_id = azurerm_user_assigned_identity.acr.principal_id
+}
+
+resource "azurerm_role_assignment" "GitActionsAcrPush" {
+  scope = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPush"
+  principal_id = azurerm_user_assigned_identity.github_actions.principal_id
 }
 
 resource "azurerm_role_assignment" "KvSecrUser" { 
@@ -806,4 +818,12 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "log-analytics_ingesti
       number_of_evaluation_periods = 1
     }
   }
+}
+
+resource "azurerm_federated_identity_credential" "github_actions" {
+  name = "github-actions-federated-credential"
+  user_assigned_identity_id = azurerm_user_assigned_identity.github_actions.id
+  audience = ["api://AzureADTokenExchange"]
+  issuer = "https://token.actions.githubusercontent.com"
+  subject = "repo:PelmeenidHapukoorega/Azure-Lab-Automation:ref:refs/heads/main"
 }
