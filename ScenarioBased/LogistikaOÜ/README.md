@@ -802,6 +802,8 @@ Left the debug output in place deliberately because its visible, self verifying 
 
 This closes up the app section entirely.
 
+Uncommented RGs cannot delete, wanted to test if my `stopbackprotect.sh` script removes the lock as well and see whether TF state needs it to exist in the state or not. Luckily it doesnt which meant that i could uncomment the lock resource in main.tf, run the script then TF destroy and it would come clean.
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:
