@@ -734,7 +734,33 @@ Added 3 lines: `FROM php:8-apache` for the base PHP/apache image, `RUN docker-ph
 
 Then i updated workflow to switch out placeholder image to the minimal test app image instead and updated the path.
 
-After all that was done ran the pipeline
+After all that was done ran the pipeline. Login failed because i had destroyed the infra yesterday so i had to get the fresh Client ID and update the secret on github.
+
+After that ran the pipeline again and it came out clean.
+
+Now i needed to add `application_stack` for the linux web app inside the `site_config` to reference ACR image. So i added that.
+
+Ran the app URL after `application_stack` fix and got default "waiting for content" page. Checked site config again and remembered it had 2 identities attached (acr and keyvault) same problem i already hit with KV earlier but now with ACR. 
+
+Needed ACR managed identity client to tell App service as to which identity to use for the pull, same as with `key_vault_reference_identity_ id` earlier.
+
+Added it by referencing ACRs identitys `.client_id`, applied and got a different error from the app log stream: `ImagePullUnauthorizedFailure`. 
+
+Checked ACR name pattern in the docs example, fix was right, redeployed and page changed to 503 instead, so the app service was now pulling and trying to start the image.
+
+Checked logs again and found: `mysqli_sql_exception: Connections using transport are prohibited while --require_secure_transport=ON`.
+
+Basically MySQL flexible server enforces TLS by default and the OG `mysqli_connect()` call never specified the SSL in the beginning. So it was attempting plain connection..
+
+Thought about disabling secure transport as a shortcut but decided against it since ive emphasised security first approach throughout the project, didnt want to bypass encryption on the 1 piece that actually would prove app talks to the database.
+
+Searched up Azures actual TLS chaing for the flexible server, DigiCert global root g2 and MS RSA root CA 2017 and DigiCert global root CA for legacy compatibility during certificate transition period, combined all 3 into 1 CA bundle for verification.
+
+Updated dockerfile to install `curl` and `openssl`, download both certs during the build then convert the MS one from DER to PEM and combined everything into a single bundle and baked into the image.
+
+Rewrote PHP connection logic (im adding references after im done) so swapped simple `mysqli_connect()`for `mysqli_init()` > `mysqli_ssl_set()` > `mysqli_real_connect()` since SSL options have to be set before connecting and not passed inline.
+
+Added `MYSQLI_CLIENT_SSL` explicitly to enforce the encryption and rebuilt the error check to match `mysqli_connect_errno()` instead of false check.
 
 # Recommendations and scoped out improvements
 

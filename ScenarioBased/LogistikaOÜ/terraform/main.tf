@@ -380,6 +380,12 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
 
   site_config {
     container_registry_use_managed_identity = true
+    container_registry_managed_identity_client_id = azurerm_user_assigned_identity.acr.client_id
+
+    application_stack {
+      docker_image_name = "fleettracker:latest"
+      docker_registry_url = "https://${azurerm_container_registry.acr.login_server}"
+    }
   }
 
   app_settings = {

@@ -5,9 +5,11 @@ $username = getenv('MySQL_Username');
 $password = getenv('MySQL_Password');
 $database = 'fleettrackerdb';
 
-$conn = mysqli_connect($host, $username, $password, $database);
+$conn = mysqli_init();
+mysqli_ssl_set($conn, NULL, NULL, "/var/www/html/azure-mysql-ca-bundle.pem", NULL, NULL);
+mysqli_real_connect($conn, $host, $username, $password, $database, 3306, NULL, MYSQLI_CLIENT_SSL);
 
-if (!$conn) {
+if  (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
