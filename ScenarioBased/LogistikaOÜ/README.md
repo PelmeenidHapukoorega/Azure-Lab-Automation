@@ -762,6 +762,24 @@ Rewrote PHP connection logic (im adding references after im done) so swapped sim
 
 Added `MYSQLI_CLIENT_SSL` explicitly to enforce the encryption and rebuilt the error check to match `mysqli_connect_errno()` instead of false check.
 
+At first the URL gave me the same error, so i restarted the app service, waited for 1-2 mins, refreshed the page and my test app was now running, log entries came clean and all was well.
+
+Even with the app running and data flowing i wanted to verify the goal (logs moving and not just the data path) instead of assuming it worked because the page loaded. 
+
+Checked app insights directly using KQL query with `requests | order by timestamp desc` and got 0 results despite app clearly being live and recieving traffic, so there was a gap becayse MySQLs audit logs were showing entries correctly for the same traffic.
+
+Searched up why, turns out app insights doesnt auto instrument PHP the way it does with .NET, python or Node. 
+
+That meant `ApplicationInsightsAgent_EXTENSION_VERSION` set earlier had no effect for PHP specifically, thus rendered useless here. Official MS PHP SDK turned out to be archived by MS since 2022 and unmaintained. Not worth building on.
+
+Found the actual clean path: App insights `v2/track` REST endpoint, officially supported and ingestible via plain HTTP post, no SKD dependency needed.
+
+Added `AppInsights_InstrumentationKey` app setting (first attempt mistakenly tried setting it as attribute on the app insights resource itself, rather than reading its `instrumentation_key` output and passing it to app servicec `app_settings` wrong direction, computed attributes get read and not assigned.)
+
+Deliberately removed `ApplicationInsightsAgent_EXTENSION_VERSION` since it had no purpose anymore.
+
+Wrote small PHP block using `curl_init`/`curl_setopt`/`curl_exec` to POST a JSON telemetry event directly to `https://dc.services.visualstudio.com/v2/track`, placed it before MySQL connection logic so the event would fire regardless of database connection outcome.
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:

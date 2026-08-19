@@ -393,7 +393,7 @@ resource "azurerm_linux_web_app" "FleetTrackerApp" {
     MySQL_Username = var.mysql_admin_username
     MySQL_Password = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.DbCreds.versionless_id})"
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.fleetinsights.connection_string
-    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
+    AppInsights_InstrumentationKey = azurerm_application_insights.fleetinsights.instrumentation_key
   }
 }
 

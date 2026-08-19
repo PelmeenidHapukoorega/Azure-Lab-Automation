@@ -4,6 +4,31 @@ $host = getenv('MySQL_Host');
 $username = getenv('MySQL_Username');
 $password = getenv('MySQL_Password');
 $database = 'fleettrackerdb';
+$appInsightsKey = getenv('AppInsights_InstrumentationKey');
+
+$telemetryPayload = json_encode([
+    "name" => "Microsoft.ApplicationInsights.Event",
+    "time" => date('c'),
+    "iKey" => $appInsightsKey,
+    "data" => [
+        "baseType" => "EventData",
+        "baseData" => [
+            "ver" => 2,
+            "name" => "PageLoaded",
+            "properties" => [
+                "page" => "index"
+            ]
+        ]
+    ]
+]);
+
+$ch = curl_init('https://dc.services.visualstudio.com/v2/track');
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $telemetryPayload);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_exec($ch);
+curl_close($ch);
 
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, "/var/www/html/azure-mysql-ca-bundle.pem", NULL, NULL);
