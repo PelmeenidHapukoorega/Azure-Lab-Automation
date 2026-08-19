@@ -1,10 +1,12 @@
 # Theory wont get you anywhere without practice
 
-I wanted to try my hand at deploying actual infra by taking my previously done labs and using my lab notes from my other repo as well as my experience in studying for AZ-104.
-Not gonna lie, did not expect what i walked in on, but in the best way possible.
+This repo is my path into Azure and DevOps engineering. Labs, a full scenario infra build (currently ongoing) and whatever comes after, all built while i was studying for AZ-104 and now AZ-400.
 
-I mean sure it can be frustrating, lots of trial and error, running into walls, switching regions, deployment failures, switching SKUs, forgetting passwords, endless terraform/bicep reading...HOWEVER!
-The satisfaction of finally seeing all the puzzle pieces together and making that final deployment is amazing.
+Didnt start with some grand plan tbh. Mostly just wanted to see if i could actually deploy real infra and not only read about it. Turns out that was exactly the thing i was missing, the trial and error, failed deployments, staying up until morning for debugging sessions, chasing a lock nobodys doc could explain, all of it is genuinely the shit i enjoy doing.
+
+Current flagship here is Logistika OÜ, full scenario based Azure migration for fictional logistics company. Private networking, identity based security with 0 static credendtials anywhere, GDPR driven compliance and audit logging, full monitoring and alerting layer and a working CI/CD pipeline using OIDC federation for best practice.
+
+Every decision, every bug, every fix documented as it happened, wrong turns and "stupid" mistakes included because i genuinely believe thats the part that actually would show how i think and not just what i can deploy.
 
 * Update July 2026: Repo has grown quite a bit since i first started. See the labs below for where things have ended up so far.
 
