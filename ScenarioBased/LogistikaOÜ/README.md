@@ -780,6 +780,28 @@ Deliberately removed `ApplicationInsightsAgent_EXTENSION_VERSION` since it had n
 
 Wrote small PHP block using `curl_init`/`curl_setopt`/`curl_exec` to POST a JSON telemetry event directly to `https://dc.services.visualstudio.com/v2/track`, placed it before MySQL connection logic so the event would fire regardless of database connection outcome.
 
+Deployed change and checked `customEvents` in app insights, still nothing, even with the app clearly serving fresh requests. 
+
+Added temporary debug output and the raw response body to actually see what the HTTP call was doing.
+
+Page source showed no debug comment at all, meaning app service had to be serving old image, same "pull doesnt refresh on its own" issue from earlier.
+
+Restarted app service, waited and checked again, this time it showed up with `curl_close()` deprecated since PHP 8.0, closing now happens automatically.
+
+Removed the line entirely.
+
+Redeployed, restarted again and the debug comment showed up with `AppInsights response code:: 200, body: {"itemsReceived":1 "itemsAccepted":1, "errors":[]}`.
+
+So app insights now received and accepted the event.
+
+Checked `customEvents` again and ran KQL and the `PageLoaded` events were there, real timestamps matching the actual page loads.
+
+So finally the original goal behind the entire apps purpose was done. Not just proving the infrastructure deploys cleanly, but also proving real data flow: writes and reads against MySQL over TLS verified connection and genuine telemetry reaching app insights, both driven by actual application traffic rather than TF applying resources.
+
+Left the debug output in place deliberately because its visible, self verifying proof that telemetry chain works.
+
+This closes up the app section entirely.
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:
