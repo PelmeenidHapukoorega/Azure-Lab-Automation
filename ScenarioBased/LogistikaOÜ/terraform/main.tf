@@ -421,6 +421,12 @@ resource "azurerm_role_assignment" "GitActionsAcrPush" {
   principal_id = azurerm_user_assigned_identity.github_actions.principal_id
 }
 
+resource "azurerm_role_assignment" "GitActionsReader" {
+  scope = azurerm_resource_group.LogistikaOU.id
+  role_definition_name = "Reader"
+  principal_id = azurerm_user_assigned_identity.github_actions.principal_id
+}
+
 resource "azurerm_role_assignment" "KvSecrUser" { 
   scope = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets User"
