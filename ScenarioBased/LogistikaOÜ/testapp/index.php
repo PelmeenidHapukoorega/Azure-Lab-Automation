@@ -27,8 +27,11 @@ curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $telemetryPayload);
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_exec($ch);
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
+
+echo "<!-- AppInsights response code: $httpCode, body: $response -->";
 
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, "/var/www/html/azure-mysql-ca-bundle.pem", NULL, NULL);
