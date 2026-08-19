@@ -696,6 +696,22 @@ Permissions got nested inside `on` instead of being at the top level, backticks 
 
 Fixed them all and moved onto testing the pipeline.
 
+Ran the pipeline for the first time, first run failed with `AADSTS70025` which was referencing my simplemetrics lab. Updated `AZURE_CLIENT_ID` secret with my current identity by running `az identity show` and adding the value.
+
+With the corrected identity now, az login succeeded but `az acr list --resource-group` came back empty which also made acr login fail with "expected one argument".
+
+Root cause for it was that the user assigned identity only had `AcrPush` scoped on the registry itself but that role doesnt allow to list resources across the RG itself.
+
+Added `Reader` role assignment and scoped it to RG so it could list resources before attempting push. 
+
+Kept it consistent with least privilege mental mode applied across the project.
+
+Last `az acr login` succeeded but warned about uppercase characters in the registry name. Push right after failed with `unauthorized`, docker registry URLs expect lowercase and the mixed name didnt match what login actually cached credentials against.
+
+Fixed it by force lowercasing the acr name in the workflow before building the registrys URL.
+
+Ran the pipeline again after all 3 fixes, completed clean end to end. Verified `fleettracker:latest` actually showing up in the registry.
+
 # Recommendations and scoped out improvements
 
 Items identified as valuable during the build but deliberately not implemented either because:
