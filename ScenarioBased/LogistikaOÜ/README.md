@@ -1,5 +1,30 @@
 # Scenario: Cloud Infrastructure Modernisation
 
+## Table of Contents
+
+- [Scenario](#scenario)
+- [Architecture and Decisions Made](#architecture-and-decisions-made)
+- [Services List and Cost Estimate](#services-list-and-cost-estimate)
+- [Cost Reconciliation](#cost-reconciliation)
+- [Architecture Diagram](#architecture-diagram)
+- [Build Log](#build-log)
+  - [Networking](#networking)
+  - [Storage](#storage)
+  - [MySQL](#mysql)
+  - [Log Analytics, App Insights, App Service, ACR](#log-analytics-app-insights-app-service-acr)
+  - [Key Vault](#key-vault)
+  - [RBAC and Resource Lock](#rbac-and-resource-lock)
+  - [Azure Policy and Audit Logging](#azure-policy-and-audit-logging)
+  - [Monitoring Alerts](#monitoring-alerts)
+  - [Backup Vault](#backup-vault)
+  - [Tagging](#tagging)
+  - [Outputs](#outputs)
+  - [CI/CD Pipeline](#cicd-pipeline)
+  - [Application and Observability](#application-and-observability)
+- [Recommendations and Scoped Out Improvements](#recommendations-and-scoped-out-improvements)
+- [Mid Build Design Decisions](#mid-build-design-decisions)
+- [References](./REFERENCES.md)
+
 ## Company background
 
 Logistika OÜ is a mid-sized Estonian logistics company based in Tallinn with 180 employees. They operate a fleet of 60 delivery vehicles across Estonia and have partnerships with carriers in Latvia and Lithuania. Their annual revenue is approximately €8 million.
@@ -41,6 +66,8 @@ They were recently audited and received a non-compliance notice for GDPR — spe
 
 # Architecture and decisions made
 
+[Back to top](#table-of-contents)
+
 After reading through the scenario, the first 3 main decision that came to mind were the following:
 
 **Containerisation VS Lift and shift**
@@ -77,7 +104,7 @@ The current infrastructure is entirely manually managed by ONE person and he als
 
 Picking managed services over IaaS in this scenario would reduce operational burden for the new guy, eliminate patching because with PaaS services the updates and patching is all managed by Azure and just makes it operable by someone without deep infrastructure knowledge.
 
-4. Migration downtime
+**Migration downtime**
 
 One of the key constraints is that the app cant have downtime more than 2 hours during migration. So some downtime was allowed but i started to think on how could i implement migration strategy in a way that there was no downtime at all?
 
@@ -85,14 +112,16 @@ Now i knew that building the container, pushing to ACR have App service pull and
 
 So my approach to tackle that problem would be:
 
-    1. Setup AZ database for MySQL empty and running
-    2. Replicate data from the on prem MySQL to AZ MySQL using AZ Database Migration service which runs in the background while the old system is still functioning/live.
-    3. Then i would point the App service to AZ MySQL, stop the old server. This is the only part where downtime would happen, but instead of hours of it, it would be minutes.
-    4. Finally i would verify that migrated data is infact intact and drivers can connect and enter data.
+1. Set up Azure Database for MySQL, empty and running
+2. Replicate data from the on-prem MySQL to Azure MySQL using Azure Database Migration Service, running in the background while the old system stays live
+3. Point App Service to Azure MySQL, stop the old server — this is the only part where downtime happens, minutes instead of hours
+4. Verify migrated data is intact and drivers can connect and enter data
     
 ---
 
 # Services list and cost estimate
+
+[Back to top](#table-of-contents)
 
 **App service B2 Linux, Basic tier**
 
@@ -198,14 +227,12 @@ Actually in hindsight over in the vnet section i came to a realisation that sinc
 
 Additonally i decided to add 4 metric rules before actually building:
 
-    1. App service data out, which i already explained
-
-    2. App service response time: If avg response time exceeds lets say 
-    3-5 seconds, could be smt with the app or traffic.
-
-    3. MySQL cpu: if consistently above 80% then might need to upsize the burstable tier.
-
-    4. AZ files capacity alert at 800Gb used, warning before hitting the limit of 1TB.
+|   | Metric Rules |
+|---|---|
+| 1 | App service data out, which i already explained |
+| 2 | App service response time: If avg response time exceeds lets say 3-5 seconds, could be smt with the app or traffic. |
+| 3 | MySQL cpu: if consistently above 80% then might need to upsize the burstable tier. |
+| 4 | AZ files capacity alert at 800Gb used, warning before hitting the limit of 1TB. |
 
 So in total 4 metric alerts.
 
@@ -282,9 +309,11 @@ However worth monitoring over a period of time to get a better estimate using me
 
 > **Note:** This is a pre build estimate based on assumptions about data volumes, traffic and usage patterns. Actual costs will definetly vary. Monitor via Cost management/Cost analysis and the budget alert during the first 30 days to validate assumptions and adjust sizing where and when needed.
 
-## Cost Reconciliation: Estimate vs. As Built
+## Cost Reconciliation
 
-Original table was a pre-build estimate. A few things changed since — mainly the MySQL private endpoint assumption, Key Vault getting added, and extra alerts built during monitoring.
+[Back to top](#table-of-contents)
+
+Original table was a pre-build estimate. A few things changed since, mainly the MySQL private endpoint assumption, Key vault getting added, and extra alerts built during monitoring.
 
 | Service | Original | As Built | Notes |
 |---|---|---|---|
@@ -299,11 +328,17 @@ Original table was a pre-build estimate. A few things changed since — mainly t
 
 # Architecture diagram
 
+[Back to top](#table-of-contents)
+
 ![Architecture diagram](./architecture.png)
 
 # Build log
 
 **Updated as infra is being built**
+
+## Networking
+
+[Back to top](#table-of-contents)
 
 Pinned provider `~> 4.0` to avoid silent breaking changes.
 
@@ -364,6 +399,10 @@ In other words, without private zones the fleet tracker app couldnt reach its ow
 
 ran plan again then verified that both zones now existed with VNet links and auto registration disabled.
 
+## Storage
+
+[Back to top](#table-of-contents)
+
 Added storage account and the file share with 1TB quota, cool tier and ST account at default Hot tier (applies to blob storage at account level, irrelevant here).
 
 Mixed up `FileStorage` instead of `StorageV2` in terraform documentation, FileStorage applies only to premium file shares running on SSDs and i went with HDD instead. StorageV2 supports file shares. 
@@ -384,6 +423,10 @@ Wanted to have Cold tier for the file share itself, however its unsupported. So 
 Disabled public access on the storage account level and enforced TLS 1.2.
 
 Thought about enforcing policy for the storage account itself as in who has access to it, but opted out since judging by the case study only a handful of people like 1-2 would actually have to interact with the environment so enforcing policy at a rg/subscription level later made more sense.
+
+## MySQL
+
+[Back to top](#table-of-contents)
 
 Moved onto Mysql server for database and initially i assumed that i would just create the resource and then configure PE for it, however as it turns out Mysql doesnt use PEs at all and instead is locked down by Vnet integration. So that meant i needed to create a seperate subnet for it just like i did for the Appservice before and then delegate it to `Microsoft.DBforMySQL/flexibleServers`.
 
@@ -408,6 +451,10 @@ Then ran plan and was surprised because i was met with `MySQL destroy/recreate` 
 Still worth flagging tho, `administrator_login` is immutable after creation, meaning that if changed it would then prompt terraform to run it against current state and detect the difference and force it to be destroyed and then recreate it with new value, not exclusive to admin login, but overall some resources are just immutable after creation and this is just 1 example of it.
 
 So if there would have been data in that and i would have ran the plan it would have destroyed the DB with all data if this was production and i wouldnt have caught it and blindly run it.
+
+## Log Analytics, App Insights, App Service, ACR
+
+[Back to top](#table-of-contents)
 
 Added workspace and app insights, chose `PerGB2018` for SKU (default SKU and current Azure standard, 5GB free tier benefit applies on top of it), referenced `workspace_id` on app insights so that once the app was running it would know which workspace to send the logs to.
 
@@ -471,6 +518,10 @@ Ran plan again, clean and expected diff (app service id type change, role assign
 
 Applied successfully, verified in the portal and made sure user assigned id had AcrPull role as well.
 
+## Key Vault
+
+[Back to top](#table-of-contents)
+
 Added `key_vault_reference_identity_id` to the app service with the wrong reference at first (`KvSecrOfficer`) before i realised that i needed to reference `azurerm_user_assigned_identity.keyvault.id` since it represents the identity itself that would read the secrets during runtime.
 
 Moved on to `app_settings` to add MySQL password URI and used `versionless_id` instead of `version` since version pinned URI would break every time secret would be rotated whereas versionless_id doesnt care and gives the latest version each time.
@@ -490,6 +541,10 @@ When i wrote `network_acls` to bypass azure services with my own IP it should ha
 My mistake was assuming that KV dealt in absolutes, either public network access or no access. I thought that by just adding `network_acls` block with my listed IP would work automatically, but in reality you need to set public network access to `true` at the resource level so it woul actually take effect and then be able to restrict it to set IP.
 
 After enabling public network access at KVs resource level, the plan and apply went throught, verified that MySQL password was visible in the apps app settings itself to confirm full chain resolved end to end. 
+
+## RBAC and Resource Lock
+
+[Back to top](#table-of-contents)
 
 Moved onto RBAC to set up necessary role assignment for current IT person as well as thinking on the new guy coming in. 
 
@@ -527,6 +582,10 @@ Ran destroy before heading to sleep and was met with an error where resources co
 
 Current workaround for it is to comment it out and once the infra is completely ready then comment it back in to take effect. Still figuring out how it would work during CI/CD.
 
+## Azure Policy and Audit Logging
+
+[Back to top](#table-of-contents)
+
 Moved onto assigning policy according to constraints mentioned. Decided to not build a dedicated policy for encryption at rest since Azure has it set by default, documented it in detail under Recommendations.
 
 For MySql server i assumed i would just need to add diagnostic setting and then point `MySqlAuditLogs` at the workspace would have been enough, however i found out that it wouldnt generate audit log data at all by default.
@@ -536,6 +595,10 @@ So i needed to turn on `audit_log_enabled` itself on the server level first thro
 Added `DML` seperately for the audit log events explicitly due to GDPR reqs since DML would actually show in depth who did what on what row, who queried etc.
 
 As a sidenote i will mention that this could add to costs which would go above the 5GB free tier mentioned earlier.
+
+## Monitoring Alerts
+
+[Back to top](#table-of-contents)
 
 Started configuring metric alert for the app services data out at 80Gb until reading docs i realised that `azurerm_monitor_metric_alert` on it couldnt natively sum a full months worth of data in evaluation window, max evaluation fram was for 2 days.
 
@@ -572,6 +635,10 @@ Ran `terraform apply -target=azurerm_key_vault.kv` which succeeded and added my 
 Ran apply and this time it went through, then verified the alerts. 
 
 Btw, did you know that Azure monitor alert rules are actually independent resources? Neither did i.
+
+## Backup Vault
+
+[Back to top](#table-of-contents)
 
 Moved onto az files backup vault, went with `UTC` instead rather than guessing specific identifier for Estonia.
 
@@ -655,6 +722,10 @@ Set the window/frequency to match storages slow moving nature instead of reusing
 
 Added scheduled KQL query alert for data ingestion on the workspace instead of using `daily_quota_gb` hardcap because data ingestion would be stopped if it reaches the threshold which in turn would mean data loss.
 
+## Tagging
+
+[Back to top](#table-of-contents)
+
 Moved onto tagging all the resources for better cost management and overview.
 
 MS CAF recommended set `CostCenter`, `Environment`, `Owner` and `Application` explicitly for foundational tagging. I could go in depth and tag according to resource type but at this scale it would add complexity instead of simplicity which i was after.
@@ -675,6 +746,10 @@ Ran terraform apply and noticed tags were all applied to RG but not child resour
 
 For that to happen i added `azurerm_resource_group_policy_remediation` which mirrored the same `for_each` pattern as the policy assignments (1 remediation per task) which after apply triggered retroactive tagging across all existing resources.
 
+## Outputs
+
+[Back to top](#table-of-contents)
+
 Moved onto adding outputs. Left admin login and password out entirely, raw value would have duplicated it for no reason.
 
 Added 8 sections: networking, storage, mysql, KV, Appservice, ACR, monitoring, RG. Mostly names, IDs, endpoints as well as `mysql_secret_versionless_id` and `acr_login_server` for the CI/CD pipeline.
@@ -686,6 +761,10 @@ Fixed it with `lifecycle { ignore_changes = [tags] }` on all 28 resource which w
 Going forward i will implement tagging as early as possible to avoid this type of manual labor ever again.
 
 Ran the plan again, clean and applied successfully.
+
+## CI/CD Pipeline
+
+[Back to top](#table-of-contents)
 
 Started with CI/CD side of the project, checked current best practices for github actions to azure auth.
 
@@ -726,6 +805,10 @@ Last `az acr login` succeeded but warned about uppercase characters in the regis
 Fixed it by force lowercasing the acr name in the workflow before building the registrys URL.
 
 Ran the pipeline again after all 3 fixes, completed clean end to end. Verified `fleettracker:latest` actually showing up in the registry.
+
+## Application and Observability
+
+[Back to top](#table-of-contents)
 
 After verifying that ACR was set up and could push images to the infrastructure i moved on to building minimal test app to genuinely validate the infrastructure end to end. So mimicking real data flow through App service > MySQL > Key vault sourced credentials not just "resources exist and TF applied cleanly, lets check out".
 
@@ -821,6 +904,8 @@ Uncommented RGs cannot delete, wanted to test if my `stopbackprotect.sh` script 
 
 # Recommendations and scoped out improvements
 
+[Back to top](#table-of-contents)
+
 Items identified as valuable during the build but deliberately not implemented either because:
 
 * Falling outside infrastructure layer jurisdiction.
@@ -892,6 +977,8 @@ Documented here as compliance evidence instead: Encryption at rest is guaranteed
 
 # Mid build design decisions
 
+[Back to top](#table-of-contents)
+
 1. MySQLs private endpoint assumption
 
 Assumed MySQL would use the same PE pattern as storage and yet discovered it uses VNet integration via dedicated delegated subnet instead which required a full subnet and NSG restructure mid build.
@@ -915,3 +1002,9 @@ Had no idea Azure backups would create hard to find non standard locks affecting
 6. App insights PHP limitation
 
 Assumed agent based auto instrumentation setting would work for any language however PHP has no auto instrumentation support at all which made me pivot to the REST API approach.
+
+## References
+
+[Back to top](#table-of-contents)
+
+See [REFERENCES.md](./REFERENCES.md) for the full list of documentation and sources used throughout this build.
