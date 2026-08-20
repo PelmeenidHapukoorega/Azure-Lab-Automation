@@ -33,6 +33,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ### Scenario based projects
 
+1. [LogistikaOÜ: Cloud Infrastructure Modernisation](#logistikaou-cloud-infrastructure-modernisation)
 
 ## Lab 01: Automated Nginx Deployment
 
@@ -290,3 +291,29 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Internal DNS only resolves inside the cluster — browser cannot resolve Kubernetes service names
 
 [README](Labs/11-Kubernetes-Networking/README.md) | [Code](Labs/11-Kubernetes-Networking/)
+
+## LogistikaOÜ: Cloud Infrastructure Modernisation
+
+**Goal:** Full scenario-based Azure migration for a fictional mid-sized logistics company — GDPR-driven infrastructure design, identity-based security with zero static credentials, complete monitoring and compliance layer, and a working CI/CD pipeline validated end-to-end with a real application.
+
+**Scenario:** on-premise infrastructure with no offsite backup, no access logging, no monitoring, and a GDPR non-compliance notice with a 90-day remediation deadline. Full case study, architecture decisions, and cost estimates in the project README.
+
+**Tech Stack**
+- Terraform (HCL), azurerm ~> 4.0
+- Azure networking: VNet, delegated subnets, NSGs, private endpoints, private DNS zones
+- Azure Database for MySQL Flexible Server, Azure Files, Key Vault, Recovery Services Vault
+- Azure Policy (Allowed Locations, tag inheritance via Modify effect), diagnostic settings for audit logging
+- Azure Monitor: metric alerts, budget alert, KQL-based scheduled query alert
+- GitHub Actions with OIDC federated identity, no stored secrets
+- Docker, PHP, MySQL (minimal test application)
+- Application Insights, custom telemetry via REST API
+
+**Highlights**
+- Fully identity-based access throughout — managed identities for ACR, Key Vault, GitHub Actions, and tag inheritance, no static credentials anywhere in the stack
+- GDPR compliance mapped directly to infrastructure: Azure Policy enforcement, audit logging across Key Vault/Storage/MySQL, encryption at rest documented as a platform default
+- Real, working CI/CD pipeline using OIDC federation — builds and pushes a Docker image with no secrets stored in GitHub
+- Minimal test application (PHP/MySQL) deployed and verified end-to-end: TLS-verified database connection, real data writes/reads, genuine telemetry reaching Application Insights via REST API
+- Full build log documenting every architectural decision, bug, and fix as it happened — including a multi-session debugging saga around Azure Backup's implicit locks and a Git Bash path-mangling bug
+- Cost estimate reconciled against as-built reality, with corrections documented where initial assumptions were wrong
+
+[README](ScenarioBased/LogistikaOÜ/README.md) | [Code](ScenarioBased/LogistikaOÜ/terraform/) | [References](ScenarioBased/LogistikaOÜ/REFERENCES.md)
