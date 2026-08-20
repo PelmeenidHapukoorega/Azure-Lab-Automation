@@ -33,7 +33,7 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ### Scenario based projects
 
-1. [LogistikaOÜ: Cloud Infrastructure Modernisation](#logistikaou-cloud-infrastructure-modernisation)
+1. [LogistikaOÜ: Cloud Infrastructure Modernisation](#logistikaoü-cloud-infrastructure-modernisation)
 
 ## Lab 01: Automated Nginx Deployment
 
