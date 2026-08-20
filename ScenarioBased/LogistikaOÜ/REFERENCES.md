@@ -53,8 +53,17 @@
 * Application Insights auto-instrumentation overview: https://learn.microsoft.com/en-us/azure/azure-monitor/app/codeless-overview
 * Application Insights custom events API (v2/track): https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-api-custom-events-metrics
 * GitHub Actions OIDC with Azure: https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure
+* Azure Policy "Allowed locations" built-in definition: https://learn.microsoft.com/en-us/azure/governance/policy/tutorials/create-and-manage
+* Azure Database Migration Service overview: https://learn.microsoft.com/en-us/azure/dms/dms-overview
+* Azure Database Migration Service, MySQL migration tutorial: https://learn.microsoft.com/en-us/azure/dms/tutorial-mysql-azure-mysql-offline-portal
+
+## Well-Architected Framework and Cloud Adoption Framework
+
+* HashiCorp Well-Architected Framework, tagging strategy: https://developer.hashicorp.com/well-architected-framework/optimize-systems/lifecycle-management/tag-cloud-resources
+* Microsoft Cloud Adoption Framework, tagging strategy: https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-tagging
 
 ## Community/GitHub sources, worth double checking myself
 
 * terraform-provider-azurerm issues (federated_identity_credential parent_id deprecation, container_registry_managed_identity_client_id): https://github.com/hashicorp/terraform-provider-azurerm/issues
+* terraform-provider-azurerm default_tags feature request (confirms it does not exist): https://github.com/hashicorp/terraform-provider-azurerm/issues/19135
 * microsoft/ApplicationInsights-PHP (archived, confirms SDK abandonment): https://github.com/microsoft/ApplicationInsights-PHP
