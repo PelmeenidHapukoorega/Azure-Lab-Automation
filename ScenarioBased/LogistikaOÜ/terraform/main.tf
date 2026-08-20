@@ -462,7 +462,7 @@ resource "azurerm_role_assignment" "TagContributor" {
 }
 
 /*
-resource "azurerm_role_assignment" "Contributor" {
+resource "azurerm_role_assignment" "Contributor" { /// Scoped out until User for the client is actually created
   scope = azurerm_resource_group.LogistikaOU.id
   role_definition_name = "Contributor"
   principal_id = var.it_admin_object_id
