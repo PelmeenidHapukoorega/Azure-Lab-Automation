@@ -582,6 +582,16 @@ Ran destroy before heading to sleep and was met with an error where resources co
 
 Current workaround for it is to comment it out and once the infra is completely ready then comment it back in to take effect. Still figuring out how it would work during CI/CD.
 
+Tried to run terraform apply (after finishing the build) with `azurerm_management_lock` uncommented this time and as it turns out it blocked the deployment when it tried to create VNet and flexible server.
+
+Now after searching up the reason as to why it was happening i found that MySQLs flexible servers VNet integration setup i was using (since no private endpoint can be attached) needs to actually modify the VNet during the creation itself and any lock regardless of the type is enough to block it.
+
+Now another issue was that i couldnt add any dependency on the lock resource itself and tell it to apply the lock once everything else is created, turns out this is a known issue and technically makes the resource kind of redundant.
+
+For work around i would just use 2 stage apply, comment out the lock resource, run apply, then comment it back in and run apply again.
+
+Another option i did consider was using `null_resource` with `sleep` provisioner but i would have to specify fixed wait time and not a real dependency so it would essentially guess how long everything else would take and not reliable.
+
 ## Azure Policy and Audit Logging
 
 [Back to top](#table-of-contents)

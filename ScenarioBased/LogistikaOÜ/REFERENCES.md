@@ -67,3 +67,5 @@
 * terraform-provider-azurerm issues (federated_identity_credential parent_id deprecation, container_registry_managed_identity_client_id): https://github.com/hashicorp/terraform-provider-azurerm/issues
 * terraform-provider-azurerm default_tags feature request (confirms it does not exist): https://github.com/hashicorp/terraform-provider-azurerm/issues/19135
 * microsoft/ApplicationInsights-PHP (archived, confirms SDK abandonment): https://github.com/microsoft/ApplicationInsights-PHP
+* HashiCorp GitHub issue: azurerm_management_lock should be applied once all other resources are deployed: https://github.com/hashicorp/terraform-provider-azurerm/issues/5473
+* HashiCorp GitHub issue: Management Locks need a better lifecycle support: https://github.com/hashicorp/terraform-provider-azurerm/issues/23768

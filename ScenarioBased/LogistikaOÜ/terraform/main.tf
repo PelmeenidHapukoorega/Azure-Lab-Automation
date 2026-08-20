@@ -519,14 +519,14 @@ resource "azurerm_user_assigned_identity" "tag_inherit" {
     ignore_changes = [ tags ]
   }
 }
-
-resource "azurerm_management_lock" "rg-level" {
+/*
+resource "azurerm_management_lock" "rg-level" { /// Needs to be commented out during the apply, once infra is up, uncomment and apply again, reasoning explained in the buildlog RBAC section
   name = "rg-level-cantdel"
   scope = azurerm_resource_group.LogistikaOU.id
   lock_level = "CanNotDelete"
   notes = "Prevents accidental deletion of the RG and resources within it. Remove ONLY with deliberate intent, contact architect first"
 }
-
+*/
 data "azurerm_policy_definition" "allowed_locations" {
   display_name = "Allowed locations"
 }
