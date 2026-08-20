@@ -875,4 +875,28 @@ Policy auditing here would be reduntant because there is no actual misconfigurat
 
 Documented here as compliance evidence instead: Encryption at rest is guaranteed by Azures platform defaults for every data holding resource in this project.
 
-# Incident response
+# Mid build design decisions
+
+1. MySQLs private endpoint assumption
+
+Assumed MySQL would use the same PE pattern as storage and yet discovered it uses VNet integration via dedicated delegated subnet instead which required a full subnet and NSG restructure mid build.
+
+2. SysteAssigned > UserAssigned identity pattern
+
+Discovered SystemAssigned identity indexing bug (ACR) then proactively avoided repeating it for Key vault and the tag inheritance policies once the pattern was understood.
+
+3. Key vaults `network_acls` vs `public_network_access_enabled` hierarchy
+
+Initially assumed that adding an IP allowslist alone would work, however the top level public access toggle overrides network ACL entirely regardless of whats actually in them.
+
+4. Tag governance via Azure policy inheritance
+
+Planned manual `tags = {...}` on every resource only to discover that `default_tags` doesnt even exist for Azure and pivoted to using built in policy based inheritance instead.
+
+5. Backup protections implicit locks and leases
+
+Had no idea Azure backups would create hard to find non standard locks affecting the destroy workflow until directly hitting it.
+
+6. App insights PHP limitation
+
+Assumed agent based auto instrumentation setting would work for any language however PHP has no auto instrumentation support at all which made me pivot to the REST API approach.
