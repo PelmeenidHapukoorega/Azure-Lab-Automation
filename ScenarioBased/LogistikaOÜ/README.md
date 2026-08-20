@@ -282,6 +282,21 @@ However worth monitoring over a period of time to get a better estimate using me
 
 > **Note:** This is a pre build estimate based on assumptions about data volumes, traffic and usage patterns. Actual costs will definetly vary. Monitor via Cost management/Cost analysis and the budget alert during the first 30 days to validate assumptions and adjust sizing where and when needed.
 
+## Cost Reconciliation: Estimate vs. As Built
+
+Original table was a pre-build estimate. A few things changed since — mainly the MySQL private endpoint assumption, Key Vault getting added, and extra alerts built during monitoring.
+
+| Service | Original | As Built | Notes |
+|---|---|---|---|
+| Private Endpoints | ~€13/month (MySQL + Storage) | ~€7/month (Storage + Key Vault) | MySQL uses VNet integration, not a PE |
+| Azure Backup (Files) | €23.96/month | Not precisely determinable | Wrong pricing model assumed, see note below |
+| Metric/Alert Resources | 4x metric alerts, €0.40/month | 4x metric alerts (€0.40) + 1x scheduled query alert | MySQL storage alert added; ingestion alert has different pricing |
+| Key Vault | €0/month | €0/month | Confirmed per-operation billing, negligible at this scale |
+| UserAssigned Identities (x4) | Not in original | €0/month | ACR, Key Vault, GitHub Actions, tag inheritance free |
+| Budget Alert | €0, 1 threshold assumed | €0, 2 thresholds (80%, 100%) | Still free, just more granular |
+
+>**Note on Azure Files Backup pricing:** original estimate assumed VM-style per-instance billing. Azure Files backup actually uses Snapshot Management — snapshots live in the storage account, priced per GB by change rate, not a fixed instance fee. No real change data exists to derive an accurate number here; actual cost should be tracked via Cost Analysis once real usage exists.
+
 # Architecture diagram
 
 ![Architecture diagram](./architecture.png)
