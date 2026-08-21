@@ -618,6 +618,8 @@ For work around i would just use 2 stage apply, comment out the lock resource, r
 
 Another option i did consider was using `null_resource` with `sleep` provisioner but i would have to specify fixed wait time and not a real dependency so it would essentially guess how long everything else would take and not reliable.
 
+Uncommented RGs cannot delete resource, wanted to test if my `stopbackprotect.sh` script removes the lock as well and see whether TF state needs it to exist in the state or not. Luckily it doesnt which meant that i could uncomment the lock resource in main.tf, run the script then TF destroy and it would come clean.
+
 ![Resource group lock and backup protection lock](./screenshots/rg-backup-locks.png)
 
 ## Azure Policy and Audit Logging
@@ -954,7 +956,7 @@ Left the debug output in place deliberately because its visible, self verifying 
 
 This closes up the app section entirely.
 
-Uncommented RGs cannot delete, wanted to test if my `stopbackprotect.sh` script removes the lock as well and see whether TF state needs it to exist in the state or not. Luckily it doesnt which meant that i could uncomment the lock resource in main.tf, run the script then TF destroy and it would come clean.
+[Demo video: page refresh triggering a MySQL write and Application Insights event](https://youtu.be/ICMvqqHL0-k)
 
 # Recommendations and scoped out improvements
 
