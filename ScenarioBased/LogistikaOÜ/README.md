@@ -566,6 +566,8 @@ After enabling public network access at KVs resource level, the plan and apply w
 
 ![Key Vault secrets list](./screenshots/kv-secrets.png)
 
+> Note: Screenshot includes IP address that was allowed for deploy time access as it was captured. Router restarted, no longer associated. Flagged for transparency rather than leaked credential.
+
 ## RBAC and Resource Lock
 
 [Back to top](#table-of-contents)
