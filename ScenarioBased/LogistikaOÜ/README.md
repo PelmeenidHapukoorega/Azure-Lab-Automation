@@ -25,6 +25,8 @@
 - [Mid Build Design Decisions](#mid-build-design-decisions)
 - [References](./REFERENCES.md)
 
+# Scenario
+
 ## Company background
 
 Logistika OÜ is a mid-sized Estonian logistics company based in Tallinn with 180 employees. They operate a fleet of 60 delivery vehicles across Estonia and have partnerships with carriers in Latvia and Lithuania. Their annual revenue is approximately €8 million.
