@@ -74,7 +74,7 @@ After reading through the scenario, the first 3 main decision that came to mind 
 
 **Containerisation VS Lift and shift**
 
-I noticed the brief explicitly stated that they wanted the app itself containerised if possible. The 2 decisions i cycled between at the start was lift and shift vs containerisation. I instinctively opted for containerisation over lift and shift because lift and shift would just replicate the same manual server management problem they already had, so that was instantly out of the questions and since i knew that azure has containerisation services like ACR, ACI, ACA and App service.
+I noticed the brief explicitly stated that they wanted the app itself containerised if possible so it was marked as a preference not an outright requirement. The 2 decisions i cycled between at the start was lift and shift vs containerisation. I opted for containerisation over lift and shift because lift and shift would just replicate the same manual server management problem they already had, so that was instantly out of the questions and since i knew that azure has containerisation services like ACR, ACI, ACA and App service.
 
 Eventually i opted to use ACR for storing and managing the container image and have the App service then run it.
 
