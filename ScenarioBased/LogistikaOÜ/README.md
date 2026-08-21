@@ -371,6 +371,10 @@ Now PEs are configured to only accept connections that come from inside the VNet
 
 Did the first terraform init/plan and deploy to verify resources would deploy with set configurations before moving on. All good.
 
+![VNet subnets](./screenshots/vnet-subnets.png)
+
+![App Service subnet delegation](./screenshots/appservice-delegation.png)
+
 Moved onto adding NSG resource, why NSG at all? Well for 1 to reuse existing pattern from my other projects and 2ndly for second layer defense and specifically for PE subnet since both PEs are handling sensitive data: App data in MySQL and Employee files in Azure files.
 
 No NSG on appservice since subnet is self limiting by design.
@@ -392,6 +396,10 @@ Added subnets NSG association resource to main.tf and forgot about referencing P
 Without it, it wouldnt have any idea what subnet should be associated with the NSG and its rule sets.
 
 After running plan and deploy again i checked for NSG rules themselves and then seperately checked that the NSG was only associated with the PE subnet and not with Appservice subnet as per design.
+
+![SQL NSG rules](./screenshots/sql-nsg.png)
+
+![PE NSG rules](./screenshots/pe-nsg.png)
 
 Added private DNS zones for both the database and file share because otherwise DNS would resolve publicly even tho access would still depend on whether the resources have `public network access` disabled or enabled and even then it wouldnt resolve to the public IP because MySQL accepts private endpoint traffic only. 
 
@@ -422,6 +430,10 @@ Wanted to have Cold tier for the file share itself, however its unsupported. So 
 
 Disabled public access on the storage account level and enforced TLS 1.2.
 
+![Storage account overview](./screenshots/storage-account.png)
+
+![File share quota and tier](./screenshots/fileshare.png)
+
 Thought about enforcing policy for the storage account itself as in who has access to it, but opted out since judging by the case study only a handful of people like 1-2 would actually have to interact with the environment so enforcing policy at a rg/subscription level later made more sense.
 
 ## MySQL
@@ -443,6 +455,10 @@ After deployment and verifying everything mentioned before, i noticed DB had def
 By doing it this way i could analyze the ingestion accurately and then make further decisions from there as to how much more storage to add and if `auto_grow_enabled` would actually be of any use.
 
 TLDR: Observe first, decide later.
+
+![MySQL server overview](./screenshots/mysql-server.png)
+
+![MySQL subnet delegation](./screenshots/mysql-subnet.png)
 
 Moved onto adding PE for az files, ran into casing issue for `subresource_names` under private service connection, used File instead of file, checked private endpoint properties docs for the correct one under Azure storage account.
 
@@ -518,6 +534,10 @@ Ran plan again, clean and expected diff (app service id type change, role assign
 
 Applied successfully, verified in the portal and made sure user assigned id had AcrPull role as well.
 
+![ACR AcrPull role assignment](./screenshots/acr-pullrole.png)
+
+![App Service identities](./screenshots/appservice-identities.png)
+
 ## Key Vault
 
 [Back to top](#table-of-contents)
@@ -541,6 +561,10 @@ When i wrote `network_acls` to bypass azure services with my own IP it should ha
 My mistake was assuming that KV dealt in absolutes, either public network access or no access. I thought that by just adding `network_acls` block with my listed IP would work automatically, but in reality you need to set public network access to `true` at the resource level so it woul actually take effect and then be able to restrict it to set IP.
 
 After enabling public network access at KVs resource level, the plan and apply went throught, verified that MySQL password was visible in the apps app settings itself to confirm full chain resolved end to end. 
+
+![Key Vault firewall and network ACLs](./screenshots/kv-firewall.png)
+
+![Key Vault secrets list](./screenshots/kv-secrets.png)
 
 ## RBAC and Resource Lock
 
@@ -592,6 +616,8 @@ For work around i would just use 2 stage apply, comment out the lock resource, r
 
 Another option i did consider was using `null_resource` with `sleep` provisioner but i would have to specify fixed wait time and not a real dependency so it would essentially guess how long everything else would take and not reliable.
 
+![Resource group lock and backup protection lock](./screenshots/rg-backup-locks.png)
+
 ## Azure Policy and Audit Logging
 
 [Back to top](#table-of-contents)
@@ -605,6 +631,10 @@ So i needed to turn on `audit_log_enabled` itself on the server level first thro
 Added `DML` seperately for the audit log events explicitly due to GDPR reqs since DML would actually show in depth who did what on what row, who queried etc.
 
 As a sidenote i will mention that this could add to costs which would go above the 5GB free tier mentioned earlier.
+
+![Allowed Locations policy compliance](./screenshots/policy-compliance.png)
+
+![MySQL audit log entries](./screenshots/audit-logs.png)
 
 ## Monitoring Alerts
 
@@ -630,7 +660,7 @@ Moved on to MySQL cpu alert and accidentally used lowercase `Average` for `aggre
 
 Ran plan/apply to verify so far done alerts and was met with key vault lockout issue during the apply. 
 
-I had just restarted my route (i have terrible network, like actually bad) and the thing with routers is that by default they use dynamic IP and static IP costs money if you wanna get one from the provider.
+I had just restarted my router (i have terrible network, like actually bad) and the thing with routers is that by default they use dynamic IP and static IP costs money if you wanna get one from the provider.
 
 This meant that eveytime my router was restarted i had to update the IP in tfvars every time.
 
@@ -645,6 +675,12 @@ Ran `terraform apply -target=azurerm_key_vault.kv` which succeeded and added my 
 Ran apply and this time it went through, then verified the alerts. 
 
 Btw, did you know that Azure monitor alert rules are actually independent resources? Neither did i.
+
+>Note: App insights also automatically creates "Failure anomalies" smart detector alert by default, not something configured myself. ML based failure rate anomaly detection.
+
+![Alert rules list](./screenshots/alerts.png)
+
+![Budget alert configuration](./screenshots/budget.png)
 
 ## Backup Vault
 
@@ -732,6 +768,8 @@ Set the window/frequency to match storages slow moving nature instead of reusing
 
 Added scheduled KQL query alert for data ingestion on the workspace instead of using `daily_quota_gb` hardcap because data ingestion would be stopped if it reaches the threshold which in turn would mean data loss.
 
+![Backup vault protected file share](./screenshots/backup.png)
+
 ## Tagging
 
 [Back to top](#table-of-contents)
@@ -755,6 +793,8 @@ Knew that the `SystemAssigned` bug would happen again if i were to go with that,
 Ran terraform apply and noticed tags were all applied to RG but not child resources. Nothing wrong with the policy itself, if i were to add new resources then new ones would inherit the same tags however not the ones that were already existing.
 
 For that to happen i added `azurerm_resource_group_policy_remediation` which mirrored the same `for_each` pattern as the policy assignments (1 remediation per task) which after apply triggered retroactive tagging across all existing resources.
+
+![Inherited tags on a resource](./screenshots/tags.png)
 
 ## Outputs
 
