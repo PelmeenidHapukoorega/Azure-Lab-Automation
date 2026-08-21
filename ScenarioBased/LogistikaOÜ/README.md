@@ -858,6 +858,8 @@ Fixed it by force lowercasing the acr name in the workflow before building the r
 
 Ran the pipeline again after all 3 fixes, completed clean end to end. Verified `fleettracker:latest` actually showing up in the registry.
 
+[View pipeline runs](https://github.com/PelmeenidHapukoorega/Azure-Lab-Automation/actions/workflows/logistikaou-cicd.yml)
+
 ## Application and Observability
 
 [Back to top](#table-of-contents)
