@@ -27,9 +27,10 @@ Notes on each value:
 * `mysql_admin_username` / `mysql_admin_password`: Credentials for the MySQL flexible server admin account. Password must contain at least 3 of: uppercase, lowercase, numbers, special characters.
 * `deployer_ip`: your current public IP, needed to allowlist your machine against Key vaults firewall so Terraform can write secrets. This is a list: If you connect from multiple networks, add each one, 1 entry per IP and each ending in `/32`. 
 
+* **This changes whenever your IP changes** (router restart, network switch, etc). If you get a 403 from Key vault during `plan`/`apply`, update this value and reapply.
+
 >Note: This is an ongoing maintenance item, not a 1 time setup step: Expect to update it every time your network changes.
 
-* **This changes whenever your IP changes** (router restart, network switch, etc). If you get a 403 from Key vault during `plan`/`apply`, update this value and reapply.
 * `it_admin_object_id`: only needed once you have actually created an Entra ID user for whoever operates this environment day to day. Leave as a placeholder until that user exists (see Section 6).
 
 ## 2. First deployment
@@ -41,11 +42,11 @@ terraform plan
 terraform apply
 ```
 
-Review the plan before confirming: Cretes roughly 60+ resources on a fresh deployment.
+Review the plan before confirming: Creates roughly 60+ resources on a fresh deployment.
 
 ## 3. Set up CI/CD
 
-The pipeline authenticates to Azure through OIDC (no stored secrets) however it needs the current identitys client ID, which changes every time the identity is recreated.
+The pipeline authenticates to Azure through OIDC (no stored secrets) however it needs the current identities client ID, which changes every time the identity is recreated.
 
 ```bash
 az identity show --resource-group Log-OU-rg --name github-actions_cicd --query clientId -o tsv
@@ -114,6 +115,7 @@ This grants Contributor (not Owner): Operator can manage all resources but canno
 1. Update `mysql_admin_password` in `terraform.tfvars`
 2. `terraform apply`: This updates both the MySQL servers actual password and the Key vault secret in the same pass
 3. Restart App Service so it picks up the new secret value:
+
 ```bash
 az webapp restart --resource-group Log-OU-rg --name logistikaou-fleettracker
 ```
