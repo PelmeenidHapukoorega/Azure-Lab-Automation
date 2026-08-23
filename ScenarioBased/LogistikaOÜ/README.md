@@ -23,7 +23,7 @@
   - [Application and Observability](#application-and-observability)
 - [Recommendations and Scoped Out Improvements](#recommendations-and-scoped-out-improvements)
 - [Mid Build Design Decisions](#mid-build-design-decisions)
-- [References](./REFERENCES.md)
+- [References](#references)
 
 # Scenario
 
@@ -110,7 +110,7 @@ Picking managed services over IaaS in this scenario would reduce operational bur
 
 One of the key constraints is that the app cant have downtime more than 2 hours during migration. So some downtime was allowed but i started to think on how could i implement migration strategy in a way that there was no downtime at all?
 
-Now i knew that building the container, pushing to ACR have App service pull and then run it would be smt like 30mins if even that. The risk came with MySQL database migration. Now it wasnt specified the size of data needed to migrate because AI didnt think about that. Lets assume i would copy data from the on prem MySQL to az database while the app is still running, now if i were to cut off during the process that would mean data could be lost when new entries are being made or files could get corrupted. 
+Now i knew that building the container, pushing to ACR have App service pull and then run it would be smt like 30mins if even that. The risk came with MySQL database migration. Lets assume i would copy data from the on prem MySQL to az database while the app is still running, now if i were to cut off during the process that would mean data could be lost when new entries are being made or files could get corrupted. 
 
 So my approach to tackle that problem would be:
 
