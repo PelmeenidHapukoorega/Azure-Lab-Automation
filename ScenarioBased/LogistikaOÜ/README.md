@@ -344,7 +344,9 @@ The following diagram reflects the actual final architecture:
 
 ![As-built architecture diagram](./architecture-as-built.svg)
 
-[For better viewing (turn dark mode on under settings for better visibility)](https://azurediagrams.com/xrePCa9i)
+[For better viewing](https://azurediagrams.com/xrePCa9i)
+
+PS! (turn dark mode on under settings for better visibility)
 
 # Build log
 
