@@ -332,11 +332,21 @@ Original table was a pre-build estimate. A few things changed since, mainly the 
 
 [Back to top](#table-of-contents)
 
+Initial diagram prior to actually building
+
 ![Architecture diagram](./architecture.png)
+
+The diagram above was the planning architecture prior to building. 
+
+Several things changed during implementation, most notably MySQLs connection method (VNet integration instead of private endpoint) the addition of NSGs, Private DNS zones and the full identity based access model. 
+
+The following diagram reflects the actual final architecture:
+
+![As-built architecture diagram](./architecture-as-built.svg)
 
 # Build log
 
-**Updated as infra is being built**
+**Infra completed and full project finalized 23.08.26**
 
 ## Networking
 
