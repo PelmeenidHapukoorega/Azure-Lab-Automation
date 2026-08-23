@@ -316,4 +316,4 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Full build log documenting every architectural decision, bug, and fix as it happened — including a multi-session debugging saga around Azure Backup's implicit locks and a Git Bash path-mangling bug
 - Cost estimate reconciled against as-built reality, with corrections documented where initial assumptions were wrong
 
-[README](ScenarioBased/LogistikaOÜ/README.md) | [Code](ScenarioBased/LogistikaOÜ/terraform/) | [References](ScenarioBased/LogistikaOÜ/REFERENCES.md)
+[README](ScenarioBased/LogistikaOÜ/README.md) | [Code](ScenarioBased/LogistikaOÜ/terraform/) | [References](ScenarioBased/LogistikaOÜ/REFERENCES.md) | [Runbook](ScenarioBased/LogistikaOÜ/RUNBOOK.md)
