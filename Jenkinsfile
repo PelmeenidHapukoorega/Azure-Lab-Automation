@@ -4,17 +4,23 @@ pipeline {
     stages {
         stage('Terraform init') {
             steps {
-                sh 'terraform init'
+                dir('ScenarioBased/LogistikaOÜ/terraform') {
+                    sh 'terraform init'
+                }
             }
         }
         stage('Terrafrom validate') {
             steps {
-                sh 'terraform validate'
+                dir('ScenarioBased/LogistikaOÜ/terraform') {
+                    sh 'terraform validate'
+                }
             }
         }
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan'
+                dir('ScenarioBased/LogistikaOÜ/terraform') {
+                    sh 'terraform plan'
+                }
             }
         }
     }
