@@ -10,7 +10,11 @@ Every decision, every bug, every fix documented as it happened, wrong turns and 
 
 * Update July 2026: Repo has grown quite a bit since i first started. See the labs below for where things have ended up so far.
 
-* Also running a second repo, [CI-CD-DevOps](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps), documenting my home lab setup and hands on DevOps tooling work: Gitea, Jenkins, K3s, Prometheus/Grafana monitoring, and whatever else I end up building outside the Azure scenario work here. 
+* Also running a second repo, [CI-CD-DevOps](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps), documenting my home lab setup and hands on DevOps tooling work: Gitea, Jenkins, K3s, Prometheus/Grafana monitoring, and whatever else I end up building outside the Azure scenario work here.
+
+* Update August 2026: My works has shifted over to previously mentioned `CI-CD-DevOps` repo because my focus is on AZ-400 exam right now and overall DevOps side specifically whereas this repo is more about infrastructure building, automation, script running and bits of CI-CD here and there. 
+
+Now with that out of the way, complete and more complex projects will still be mentioned here as ive grown accustomed to using this for portfolio showcasing. 
 
 # Azure Lab Automation
 
