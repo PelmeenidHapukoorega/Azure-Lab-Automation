@@ -41,6 +41,10 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 1. [LogistikaOÜ: Cloud Infrastructure Modernisation](#logistikaoü-cloud-infrastructure-modernisation)
 
+### Homelabing projects
+
+
+
 ## Lab 01: Automated Nginx Deployment
 
 **Goal:** Deploy a Linux Web Server automatically without using the Portal.
@@ -323,3 +327,27 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Cost estimate reconciled against as-built reality, with corrections documented where initial assumptions were wrong
 
 [README](ScenarioBased/LogistikaOÜ/README.md) | [Code](ScenarioBased/LogistikaOÜ/terraform/) | [References](ScenarioBased/LogistikaOÜ/REFERENCES.md) | [Runbook](ScenarioBased/LogistikaOÜ/RUNBOOK.md)
+
+## Ingress + Landing page infra: GitOps CI/CD Pipeline for a public portfolio site
+
+**Goal:** Build a full GitOps CI/CD pipeline for a public-facing portfolio landing page, git push triggers an automated build, image push to a self-hosted registry, and cluster deployment via ArgoCD: on top of standing up proper ingress, TLS, and DNS for the rest of the homelab.
+
+**Tech Stack**
+- K3s, Traefik (ingress controller)
+- cert-manager (self-hosted CA, automatic TLS issuance/renewal)
+- Jenkins, Kaniko (daemonless in-cluster image builds)
+- Gitea (self-hosted OCI container registry)
+- ArgoCD (GitOps sync)
+- Cloudflare Tunnel + Zero Trust (public exposure, webhook security)
+- Tailscale (private remote access, split DNS)
+- Pi-hole (internal DNS)
+
+**Highlights**
+- Full GitOps loop end to end: push to `main` → Kaniko builds and pushes an image tagged with the commit SHA → Jenkins updates the deployment manifest and commits the new tag → ArgoCD detects the change and syncs it to the cluster — no manual `kubectl apply` anywhere in the loop
+- Self-hosted root CA via cert-manager, trusted across every internal service (ArgoCD, Gitea, Grafana, Prometheus, Homarr) — real HTTPS with no public domain required internally
+- Public webhook endpoint locked down with a Cloudflare WAF rule scoped to GitHub's published IP ranges, plus HMAC signature verification, so the one public route has exactly one job
+- Root-caused and recovered a real ArgoCD incident where an in-flight automated sync with `prune: true` deleted unrelated live infrastructure (Homarr, ingresses, the internal CA) after a scope leak in the watched manifest folder — recovered without data loss, documented as a lesson on ArgoCD's operation lifecycle
+- Least-privilege RBAC for Jenkins's Kubernetes agent (namespace-scoped Role, not cluster-wide)
+- Full build log documenting every bug hit along the way — CoreDNS split-horizon resolution, Kaniko/containerd CA trust, a Groovy string-interpolation credential leak, and more
+
+[README](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/blob/main/Homelabing/Ingress-page/README.md) | [Code](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/tree/main/Homelabing/Ingress-page)
