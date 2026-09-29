@@ -43,6 +43,12 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 
 ### Homelabing projects
 
+1. [Gitea: Self-Hosted Git Server](#gitea-self-hosted-git-server)
+2. [Jenkins: Self-Hosted CI/CD](#jenkins-self-hosted-cicd)
+3. [K3s Migration: From Docker to Kubernetes](#k3s-migration-from-docker-to-kubernetes)
+4. [ArgoCD: GitOps Ingress for the Home Lab](#argocd-gitops-ingress-for-the-home-lab)
+5. [Prometheus + Grafana: Observability Stack](#prometheus--grafana-observability-stack)
+6. [Ingress + Landing Page Infra: GitOps CI/CD Pipeline for a Public Portfolio Site](#ingress--landing-page-infra-gitops-cicd-pipeline-for-a-public-portfolio-site)
 
 
 ## Lab 01: Automated Nginx Deployment
@@ -301,6 +307,84 @@ This repository contains my Infrastructure as Code (IaC) and CI/CD pipelines for
 - Internal DNS only resolves inside the cluster — browser cannot resolve Kubernetes service names
 
 [README](Labs/11-Kubernetes-Networking/README.md) | [Code](Labs/11-Kubernetes-Networking/)
+
+## Gitea: Self-Hosted Git Server
+
+**Goal:** Self-hosted git remote as a GitHub backup and the base later tools (Jenkins, ArgoCD) point at.
+
+**Tech Stack**
+- Docker
+- Gitea
+
+**Highlights**
+- Web UI on :3000, SSH on :2222 (22 already taken by the host's own SSH)
+- Data persisted in a named Docker volume, survives container rebuilds
+- Built specifically so work stays reachable if GitHub has an outage
+
+[README](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/blob/main/gitea/setup/README.md) | [Code](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/tree/main/gitea)
+
+## Jenkins: Self-Hosted CI/CD
+
+**Goal:** Self-hosted CI/CD as the next step in pipeline tooling, since it's widely required in DevOps job postings.
+
+**Tech Stack**
+- Docker
+- Jenkins
+
+**Highlights**
+- Initial admin password pulled straight from the mounted volume (`/var/jenkins_home/secrets/initialAdminPassword`)
+- Port 8081 instead of default 8080, to avoid future collisions with other tools
+- Data persisted in a named Docker volume, same pattern as Gitea
+
+[README](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/blob/main/jenkins/setup/README.md) | [Code](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/tree/main/jenkins)
+
+## K3s Migration: From Docker to Kubernetes
+
+**Goal:** Migrate self-hosted services off Docker onto K3s after an unattended Jenkins container silently pinned CPU at 101% and starved the host.
+
+**Tech Stack**
+- K3s
+- DaemonSets/Deployments with explicit resource requests and limits
+
+**Highlights**
+- Root-caused with `ps aux` — a Jenkins process had been running since days after the container was supposedly deleted
+- Migrated `node_exporter` first as the lowest-risk service to learn K3s on
+- Per-workload CPU/RAM limits now enforced so this failure mode can't recur
+
+[README](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/blob/main/k3s/k3s-migration/README.md) | [Code](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/tree/main/k3s)
+
+## ArgoCD: GitOps Ingress for the Home Lab
+
+**Goal:** Clean HTTPS URLs for the home lab, built the way a real cluster solves it — ingress, cert-manager, and GitOps — instead of a simple reverse proxy.
+
+**Tech Stack**
+- K3s's built-in Traefik ingress
+- cert-manager (local CA)
+- Pi-hole (internal DNS)
+- Homarr (landing page)
+- ArgoCD
+
+**Highlights**
+- GitHub stays the source of truth ArgoCD watches directly — Gitea is a mirror only, to avoid its pull-interval delay
+- Every ingress change now ships via `git push`, not manual `kubectl apply`
+
+[README](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/blob/main/argocd/setup/README.md) | [Code](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/tree/main/argocd)
+
+## Prometheus + Grafana: Observability Stack
+
+**Goal:** Self-hosted observability for the whole home lab, displayed live on the server's own second screen.
+
+**Tech Stack**
+- Prometheus
+- Grafana
+- node_exporter
+- cAdvisor
+
+**Highlights**
+- `node_exporter` runs under a dedicated no-login system user (least privilege, in case of a vulnerability)
+- Dashboards later migrated onto K3s alongside the rest of the stack
+
+[README](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/blob/main/prometheus-grafana/setup/README.md) | [Code](https://github.com/PelmeenidHapukoorega/CI-CD-DevOps/tree/main/prometheus-grafana)
 
 ## LogistikaOÜ: Cloud Infrastructure Modernisation
 
